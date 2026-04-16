@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-import utp.edu.sistema_gestor_incidencias.model.Usuario;
+import org.springframework.stereotype.Service;
 
+import utp.edu.sistema_gestor_incidencias.model.Usuario;
+@Service
 public class UsuarioService {
 	public List<Usuario> usuarios = new  ArrayList<>();
 	private AtomicLong idGenerator = new AtomicLong(1);
