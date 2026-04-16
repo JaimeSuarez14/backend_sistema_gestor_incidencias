@@ -4,19 +4,24 @@ public class Incidencia {
 	private Long id;
 	private String titulo;
 	private String descripcion;
-	private String estado;
+	private EstadoIncidencia estado;
 	private Usuario usuario;
+	private Usuario tecnico;
 	
 	public Incidencia() {}
 	
-	public Incidencia(Long id, String titulo, String descripcion, String estado, Usuario usuario) {
+	
+	public Incidencia(Long id, String titulo, String descripcion, EstadoIncidencia estado, Usuario usuario, Usuario tecnico) {
 		super();
 		this.id = id;
 		this.titulo = titulo;
 		this.descripcion = descripcion;
 		this.estado = estado;
 		this.usuario = usuario;
+		this.tecnico = tecnico;
 	}
+
+
 	public Long getId() {
 		return id;
 	}
@@ -35,10 +40,10 @@ public class Incidencia {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	public String getEstado() {
+	public EstadoIncidencia getEstado() {
 		return estado;
 	}
-	public void setEstado(String estado) {
+	public void setEstado(EstadoIncidencia estado) {
 		this.estado = estado;
 	}
 	public Usuario getUsuario() {
@@ -46,6 +51,14 @@ public class Incidencia {
 	}
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	public Usuario getTecnico() {
+		return tecnico;
+	}
+
+	public void setTecnico(Usuario tecnico) {
+		this.tecnico = tecnico;
 	}
 	
 	
