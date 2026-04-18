@@ -6,6 +6,7 @@ public class Usuario {
 	private String correo;
 	private Estado estado;
 	private Rol rol;
+	
 	private Area area;
 	
 	public Usuario() {}
