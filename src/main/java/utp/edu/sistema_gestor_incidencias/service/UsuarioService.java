@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
