@@ -9,11 +9,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Service;
 
 import utp.edu.sistema_gestor_incidencias.model.Incidencia;
-import utp.edu.sistema_gestor_incidencias.model.EstadoIncidencia;
-import utp.edu.sistema_gestor_incidencias.model.Usuario;
+
 
 @Service
-public class IncidenteService {
+public class IncidenciaService {
 
     private List<Incidencia> incidencias = new ArrayList<>();
     private AtomicLong idGenerator = new AtomicLong(1);

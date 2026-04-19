@@ -1,12 +1,10 @@
 package utp.edu.sistema_gestor_incidencias.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 

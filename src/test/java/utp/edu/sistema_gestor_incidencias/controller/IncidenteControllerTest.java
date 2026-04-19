@@ -9,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import utp.edu.sistema_gestor_incidencias.model.*;
-import utp.edu.sistema_gestor_incidencias.service.IncidenteService;
+import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(IncidenteController.class)
+@WebMvcTest(IncidenciaController.class)
 class IncidenteControllerTest {
 
     @Autowired
@@ -29,7 +29,7 @@ class IncidenteControllerTest {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @MockitoBean
-    private IncidenteService incidenteService;
+    private IncidenciaService incidenteService;
 
     private Incidencia incidenciaEjemplo() {
         Usuario usuario = new Usuario(1L, "Jaime Ruiz", "jaime@utp.edu",

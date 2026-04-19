@@ -8,14 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import utp.edu.sistema_gestor_incidencias.model.Incidencia;
-import utp.edu.sistema_gestor_incidencias.service.IncidenteService;
+import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 
 @RestController
 @RequestMapping("/api/incidencia")
-public class IncidenteController {
+public class IncidenciaController {
 
     @Autowired
-    private IncidenteService incidenteService;
+    private IncidenciaService incidenteService;
 
     @PostMapping
     public ResponseEntity<Incidencia> crearIncidencia(@RequestBody Incidencia incidencia) {
