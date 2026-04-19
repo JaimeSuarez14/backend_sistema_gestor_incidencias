@@ -2,6 +2,7 @@ package utp.edu.sistema_gestor_incidencias.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.stereotype.Service;
@@ -29,5 +30,11 @@ public class IncidenciaService {
 			            return incidencia;
 			        })
 			        .orElse(null);
+	}
+	
+	public Optional<Incidencia> obtenerIncidencia(Long id) {
+		return incidencias.stream()
+				.filter(i -> i.getId().equals(id))
+				.findFirst();
 	}
 }
