@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import utp.edu.sistema_gestor_incidencias.model.*;
 import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
+import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,20 +31,31 @@ class IncidenteControllerTest {
 
     @MockitoBean
     private IncidenciaService incidenteService;
+    
+    @MockitoBean
+    private UsuarioService usuarioService; 
+
+    private Usuario usuarioEjemplo() {
+        return new Usuario(1L, "Jaime Ruiz", "jaime@utp.edu",
+                Rol.EMPLEADO, Area.CONTABILIDAD, Estado.ACTIVO);
+    }
+    
+    private Usuario tecnicoEjemplo() {
+        return new Usuario(2L, "Johan Gonzales", "johan@utp.edu",
+                Rol.TECNICO_NIVEL_1, Area.SISTEMAS, Estado.ACTIVO);
+    }
 
     private Incidencia incidenciaEjemplo() {
-        Usuario usuario = new Usuario(1L, "Jaime Ruiz", "jaime@utp.edu",
-                Rol.EMPLEADO, Area.CONTABILIDAD, Estado.ACTIVO);
-        Usuario tecnico = new Usuario(2L, "Johan Gonzales", "johan@utp.edu",
-                Rol.TECNICO_NIVEL_1, Area.SISTEMAS, Estado.ACTIVO);
         return new Incidencia(1L, "PC no enciende", "El equipo no responde al inicio",
-                EstadoIncidencia.ABIERTO, usuario, tecnico);
+                EstadoIncidencia.ABIERTO, usuarioEjemplo(), tecnicoEjemplo());
     }
 
     // Jaime — POST /api/incidencia
     @Test
     void crearIncidencia_retorna201YIncidenciaCreada() throws Exception {
         Incidencia incidencia = incidenciaEjemplo();
+        when(usuarioService.obtenerUsuario(1L)).thenReturn(Optional.of(usuarioEjemplo()));
+        when(usuarioService.obtenerUsuario(2L)).thenReturn(Optional.of(tecnicoEjemplo()));
         when(incidenteService.crearIncidencia(any(Incidencia.class))).thenReturn(incidencia);
 
         mockMvc.perform(post("/api/incidencia")
@@ -60,6 +72,8 @@ class IncidenteControllerTest {
     void modificarIncidencia_retorna200YIncidenciaModificada() throws Exception {
         Incidencia incidencia = incidenciaEjemplo();
         incidencia.setEstado(EstadoIncidencia.PENDIENTE);
+        when(usuarioService.obtenerUsuario(1L)).thenReturn(Optional.of(usuarioEjemplo()));
+        when(usuarioService.obtenerUsuario(2L)).thenReturn(Optional.of(tecnicoEjemplo()));
         when(incidenteService.modificarIncidencia(eq(1L), any(Incidencia.class))).thenReturn(incidencia);
 
         mockMvc.perform(put("/api/incidencia/1")

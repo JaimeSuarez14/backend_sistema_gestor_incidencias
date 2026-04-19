@@ -2,6 +2,7 @@ package utp.edu.sistema_gestor_incidencias.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -18,6 +19,8 @@ public class SeguimientoService {
 
     public Seguimiento crearSeguimiento(Seguimiento seguimiento) {
         seguimiento.setIdSeguimiento(idGenerator.getAndIncrement());
+        Date fechaActual = new Date();
+        seguimiento.setFecha(fechaActual);
         this.seguimientos.add(seguimiento);
         return seguimiento;
     }

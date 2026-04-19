@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import utp.edu.sistema_gestor_incidencias.model.Incidencia;
 import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
+import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 
 @RestController
 @RequestMapping("/api/incidencia")
@@ -16,19 +17,49 @@ public class IncidenciaController {
 
     @Autowired
     private IncidenciaService incidenteService;
-
+    
+    @Autowired
+    private UsuarioService usuarioService;
+    
+    
     @PostMapping
-    public ResponseEntity<Incidencia> crearIncidencia(@RequestBody Incidencia incidencia) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(incidenteService.crearIncidencia(incidencia));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> modificarIncidencia(@PathVariable Long id, @RequestBody Incidencia incidencia) {
-        Incidencia modificada = incidenteService.modificarIncidencia(id, incidencia);
-        if (modificada != null) return ResponseEntity.ok(modificada);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Incidencia no encontrada con id: " + id);
-    }
-
+    public ResponseEntity< ? > crearIncidencia(@RequestBody Incidencia incidencia ){
+		
+		Long idUsu  = incidencia.getUsuario().getId();
+		Long idTec  = incidencia.getTecnico().getId();
+		
+		var usuario =  usuarioService.obtenerUsuario(idUsu);
+		var tecnico =  usuarioService.obtenerUsuario(idTec);
+		
+		if(!usuario.isPresent() | !tecnico.isPresent()) 
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado con ese ID") ;
+		
+		incidencia.setUsuario( usuario.get() );
+		incidencia.setTecnico( tecnico.get() );
+		
+		var newIncidencia = this.incidenteService.crearIncidencia(incidencia);
+		return ResponseEntity.status(HttpStatus.CREATED).body(newIncidencia);
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity< ? > modificarIndicencia( @PathVariable("id") Long id ,@RequestBody Incidencia incidencia ){
+		
+		Long idUsu  = incidencia.getUsuario().getId();
+		Long idTec  = incidencia.getTecnico().getId();
+		
+		var usuario =  usuarioService.obtenerUsuario(idUsu);
+		var tecnico =  usuarioService.obtenerUsuario(idTec);
+		
+		if(!usuario.isPresent() | !tecnico.isPresent()) 
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado con ese ID") ;
+		
+		incidencia.setUsuario( usuario.get() );
+		incidencia.setTecnico( tecnico.get() );
+		
+		var newIncidencia = this.incidenteService.modificarIncidencia(id, incidencia);
+		return ResponseEntity.ok().body(newIncidencia);
+	}
+	
     @GetMapping
     public ResponseEntity<List<Incidencia>> listarIncidencias() {
         return ResponseEntity.ok(incidenteService.listarIncidencias());
