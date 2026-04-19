@@ -1,6 +1,7 @@
 package utp.edu.sistema_gestor_incidencias.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -8,44 +9,40 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.stereotype.Service;
 
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
+
 @Service
 public class UsuarioService {
-	public List<Usuario> usuarios = new  ArrayList<>();
-	private AtomicLong idGenerator = new AtomicLong(1);
 
-	public Usuario  crearUsuario(Usuario usuario) {
-		usuario.setId((Long)this.idGenerator.getAndIncrement());
-		this.usuarios.add(usuario);
-		return usuario;
-	}
-	
-	public Optional<Usuario> obtenerUsuario( Long id) {
-		Optional<Usuario> user = this.usuarios.stream()
-			    .filter(u -> u.getId() == id)
-			    .findFirst();
-		return user;
-	}
-	
-	public List<Usuario> listarUsuarios(){
-		
-		return this.usuarios;
-		
-	}
-	public Usuario actualizarUsuario(Long id,Usuario usuarioActualizado) {
-		
-		for (Usuario u : usuarios) {
-            if (u.getId().equals(id)) {
-                u.setNombre(usuarioActualizado.getNombre());
-                u.setCorreo(usuarioActualizado.getCorreo());
-                u.setArea(usuarioActualizado.getArea());
-                u.setRol(usuarioActualizado.getRol());
-                u.setEstado(usuarioActualizado.getEstado());
+    private List<Usuario> usuarios = new ArrayList<>();
+    private AtomicLong idGenerator = new AtomicLong(1);
 
-                return u;
-            }
+    public Usuario crearUsuario(Usuario usuario) {
+        usuario.setId(idGenerator.getAndIncrement());
+        this.usuarios.add(usuario);
+        return usuario;
+    }
+
+    public Usuario modificarUsuario(Long id, Usuario datosNuevos) {
+        Optional<Usuario> encontrado = obtenerUsuario(id);
+        if (encontrado.isPresent()) {
+            Usuario u = encontrado.get();
+            u.setNombre(datosNuevos.getNombre());
+            u.setCorreo(datosNuevos.getCorreo());
+            u.setRol(datosNuevos.getRol());
+            u.setArea(datosNuevos.getArea());
+            u.setEstado(datosNuevos.getEstado());
+            return u;
         }
-		return null;
-	}
-	
-	
+        return null;
+    }
+
+    public List<Usuario> listarUsuarios() {
+        return Collections.unmodifiableList(usuarios);
+    }
+
+    public Optional<Usuario> obtenerUsuario(Long id) {
+        return this.usuarios.stream()
+                .filter(u -> u.getId().equals(id))
+                .findFirst();
+    }
 }
