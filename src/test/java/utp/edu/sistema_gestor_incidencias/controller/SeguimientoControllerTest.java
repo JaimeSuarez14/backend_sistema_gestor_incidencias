@@ -95,5 +95,53 @@ class SeguimientoControllerTest {
 
         mockMvc.perform(get("/api/seguimiento/99"))
                 .andExpect(status().isNotFound());
+     }
+    
+    
+
+
+    // Seguimiento // 
+    @Test
+    void listarSeguimientos_retornaListaVacia() throws Exception {
+        when(seguimientoService.listarSeguimientos()).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/seguimiento"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
+    @Test
+    void listarSeguimientos_retornaMultiplesSeguimientos() throws Exception {
+        Seguimiento s1 = seguimientoEjemplo();
+
+        Usuario usuario = new Usuario(2L, "Jamil Alarcon", "jml@utp.edu",
+                Rol.TECNICO_NIVEL_2, Area.SISTEMAS, Estado.ACTIVO);
+        Incidencia incidencia = new Incidencia(2L, "Monitor falla", "Descripcion 2",
+                EstadoIncidencia.ABIERTO, usuario, usuario);
+        Seguimiento s2 = new Seguimiento(2L, incidencia, "Cambio de monitor", new Date(), Estado.ACTIVO);
+
+        when(seguimientoService.listarSeguimientos()).thenReturn(List.of(s1, s2));
+
+        mockMvc.perform(get("/api/seguimiento"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2));
+    }
+
+    @Test
+    void obtenerSeguimiento_validaComentarioCuandoExiste() throws Exception {
+        when(seguimientoService.obtenerSeguimiento(1L)).thenReturn(Optional.of(seguimientoEjemplo()));
+
+        mockMvc.perform(get("/api/seguimiento/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.idSeguimiento").value(1L))
+                .andExpect(jsonPath("$.comentario").value("Revisando el equipo"));
+    }
+
+    @Test
+    void obtenerSeguimiento_idInvalido_retorna404() throws Exception {
+        when(seguimientoService.obtenerSeguimiento(-1L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/seguimiento/-1"))
+                .andExpect(status().isNotFound());
     }
 }
