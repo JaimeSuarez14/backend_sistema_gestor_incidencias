@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -63,6 +64,21 @@ class UsuarioControllerTest {
                 .content(objectMapper.writeValueAsString(usuario)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nombre").value("Abel Modificado"));
+    }
+
+     // Abel — PUT /api/usuario/{id}
+    @Test
+    void modificarUsuario_retorna404NotFound() throws Exception {
+        Usuario usuario = usuarioEjemplo();
+        usuario.setNombre("Abel Modificado");
+        usuario.setId(99L);
+        when(usuarioService.modificarUsuario(eq(99L), any(Usuario.class))).thenReturn(null);
+
+        mockMvc.perform(put("/api/usuario/99")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(usuario)))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Usuario no encontrado con id: 99"));;
     }
 
     // Abel — GET /api/usuario

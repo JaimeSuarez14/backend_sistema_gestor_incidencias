@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import utp.edu.sistema_gestor_incidencias.model.*;
+import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.SeguimientoService;
 
 import java.util.Date;
@@ -17,6 +18,8 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -32,6 +35,9 @@ class SeguimientoControllerTest {
     @MockitoBean
     private SeguimientoService seguimientoService;
 
+    @MockitoBean
+    private IncidenciaService incidenciaService;
+
     private Seguimiento seguimientoEjemplo() {
         Usuario usuario = new Usuario(1L, "Stephani Lopez", "stephani@utp.edu",
                 Rol.TECNICO_NIVEL_2, Area.SISTEMAS, Estado.ACTIVO);
@@ -44,6 +50,7 @@ class SeguimientoControllerTest {
     @Test
     void crearSeguimiento_retorna201YSeguimientoCreado() throws Exception {
         Seguimiento seguimiento = seguimientoEjemplo();
+        when(incidenciaService.obtenerIncidencia(1L)).thenReturn(Optional.of(seguimiento.getIncidencia()));
         when(seguimientoService.crearSeguimiento(any(Seguimiento.class))).thenReturn(seguimiento);
 
         mockMvc.perform(post("/api/seguimiento")
@@ -59,6 +66,7 @@ class SeguimientoControllerTest {
     void modificarSeguimiento_retorna200YSeguimientoModificado() throws Exception {
         Seguimiento seguimiento = seguimientoEjemplo();
         seguimiento.setComentario("Equipo reparado");
+        when(incidenciaService.obtenerIncidencia(1L)).thenReturn(Optional.of(seguimiento.getIncidencia()));
         when(seguimientoService.modificarSeguimiento(eq(1L), any(Seguimiento.class))).thenReturn(seguimiento);
 
         mockMvc.perform(put("/api/seguimiento/1")
@@ -143,5 +151,41 @@ class SeguimientoControllerTest {
 
         mockMvc.perform(get("/api/seguimiento/-1"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void crearSeguimiento_cuandoIncidenciaNoExiste_retorna404() throws Exception {
+        var seguimiento = seguimientoEjemplo();
+        var incidenciaInexistente = new Incidencia();
+        incidenciaInexistente.setId(99L); // ID que no existe
+        seguimiento.setIncidencia(incidenciaInexistente);
+
+        // 2. Simular el comportamiento del servicio: el Optional debe estar vacío
+        when(incidenciaService.obtenerIncidencia(99L)).thenReturn(Optional.empty());
+
+        // 3. Ejecutar la petición y verificar
+        mockMvc.perform(post("/api/seguimiento")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(seguimiento)))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Incidencia no encontrado con ese ID"));
+        
+        // Verificación opcional: asegurar que el servicio de seguimiento NUNCA se llamó
+        verify(seguimientoService, never()).crearSeguimiento(any(Seguimiento.class));
+    }
+
+     @Test
+    void modificarSeguimiento_cuandoIncidenciaNoExiste_retorna404() throws Exception {
+        var seguimiento = seguimientoEjemplo();
+        seguimiento.setComentario("Equipo reparado, puede recogerlo.");
+        seguimiento.getIncidencia().setId(99L); // ID que no existe
+        when(incidenciaService.obtenerIncidencia(99L)).thenReturn(Optional.empty());
+        when(seguimientoService.modificarSeguimiento(eq(1L), any(Seguimiento.class))).thenReturn(seguimiento);
+
+        mockMvc.perform(put("/api/seguimiento/99")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(seguimiento)))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Incidencia no encontrado con ese ID"));
     }
 }

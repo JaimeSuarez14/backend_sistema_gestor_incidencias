@@ -111,4 +111,39 @@ class IncidenteControllerTest {
         mockMvc.perform(get("/api/incidencia/99"))
                 .andExpect(status().isNotFound());
     }
+
+    // Jaime — POST /api/incidencia
+    @Test
+    void crearIncidencia_retorna404NotFound() throws Exception {
+        Incidencia incidencia = incidenciaEjemplo();
+        incidencia.getUsuario().setId(99L);;
+        when(usuarioService.obtenerUsuario(99L)).thenReturn(Optional.empty());
+        when(usuarioService.obtenerUsuario(2L)).thenReturn(Optional.of(tecnicoEjemplo()));
+        when(incidenteService.crearIncidencia(any(Incidencia.class))).thenReturn(incidencia);
+
+        mockMvc.perform(post("/api/incidencia")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(incidencia)))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Usuario no encontrado con ese ID"));
+               
+    }
+
+    // Jaime — put /api/incidencia/{id}
+    @Test
+    void modificarIncidencia_retorna404NotFound() throws Exception {
+        Incidencia incidencia = incidenciaEjemplo();
+        incidencia.setDescripcion("El equipo prende, pero demora como 5 minutos en iniciar sesión");
+        incidencia.getUsuario().setId(99L);;
+        when(usuarioService.obtenerUsuario(99L)).thenReturn(Optional.empty());
+        when(usuarioService.obtenerUsuario(2L)).thenReturn(Optional.of(tecnicoEjemplo()));
+        when(incidenteService.crearIncidencia(any(Incidencia.class))).thenReturn(incidencia);
+
+        mockMvc.perform(put("/api/incidencia/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(incidencia)))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Usuario no encontrado con ese ID"));
+               
+    }
 }

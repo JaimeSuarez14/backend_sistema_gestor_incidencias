@@ -21,7 +21,6 @@ public class IncidenciaController {
     @Autowired
     private UsuarioService usuarioService;
     
-    
     @PostMapping
     public ResponseEntity< ? > crearIncidencia(@RequestBody Incidencia incidencia ){
 		
