@@ -1,29 +1,26 @@
 package utp.edu.sistema_gestor_incidencias.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
+import utp.edu.sistema_gestor_incidencias.repository.UsuarioRepository;
 
 @Service
 public class UsuarioService {
 
-    private List<Usuario> usuarios = new ArrayList<>();
-    private AtomicLong idGenerator = new AtomicLong(1);
-
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+	
     public Usuario crearUsuario(Usuario usuario) {
-        usuario.setId(idGenerator.getAndIncrement());
-        this.usuarios.add(usuario);
-        return usuario;
+       return this.usuarioRepository.save(usuario);
     }
 
     public Usuario modificarUsuario(Long id, Usuario datosNuevos) {
-        Optional<Usuario> encontrado = obtenerUsuario(id);
+        Optional<Usuario> encontrado = this.usuarioRepository.findById(id);
         if (encontrado.isPresent()) {
             Usuario u = encontrado.get();
             u.setNombre(datosNuevos.getNombre());
@@ -31,18 +28,18 @@ public class UsuarioService {
             u.setRol(datosNuevos.getRol());
             u.setArea(datosNuevos.getArea());
             u.setEstado(datosNuevos.getEstado());
-            return u;
+            return this.usuarioRepository.save(u);
+             
         }
         return null;
     }
 
     public List<Usuario> listarUsuarios() {
-        return Collections.unmodifiableList(usuarios);
+        return this.usuarioRepository.findAll();
     }
 
     public Optional<Usuario> obtenerUsuario(Long id) {
-        return this.usuarios.stream()
-                .filter(u -> u.getId().equals(id))
-                .findFirst();
+    	Optional<Usuario> encontrado = this.usuarioRepository.findById(id);
+        return encontrado;
     }
 }
