@@ -1,11 +1,28 @@
 package utp.edu.sistema_gestor_incidencias.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
+@Entity
 public class Incidencia {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	private Long id;
 	private String titulo;
 	private String descripcion;
+	@Enumerated(EnumType.STRING)
 	private EstadoIncidencia estado;
+	@ManyToOne
+	@JoinColumn(name="usuario_id")
 	private Usuario usuario;
+	@ManyToOne
+	@JoinColumn(name="tecnico_id")
 	private Usuario tecnico;
 	
 	public Incidencia() {}

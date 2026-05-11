@@ -2,12 +2,28 @@ package utp.edu.sistema_gestor_incidencias.model;
 
 import java.util.Date;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
+@Entity
 public class Seguimiento {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	private Long idSeguimiento;
+	@ManyToOne
+	@JoinColumn(name="incidencia_id")
 	private Incidencia incidencia;
 	private String comentario;
 	private Date fecha;
+	@Enumerated(EnumType.STRING)
 	private Estado estado;
+	
 	public Seguimiento(Long idSeguimiento, Incidencia incidencia, String comentario, Date fecha, Estado estado) {
 		super();
 		this.idSeguimiento = idSeguimiento;
