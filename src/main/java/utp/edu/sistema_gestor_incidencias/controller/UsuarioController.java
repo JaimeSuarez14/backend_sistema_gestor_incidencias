@@ -12,6 +12,7 @@ import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 
 @RestController
 @RequestMapping("/api/usuario")
+@CrossOrigin(origins = "*", allowedHeaders = "*") 
 public class UsuarioController {
 
     @Autowired
