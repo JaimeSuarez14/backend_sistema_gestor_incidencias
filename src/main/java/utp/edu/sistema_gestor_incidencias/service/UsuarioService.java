@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
@@ -41,5 +43,9 @@ public class UsuarioService {
     public Optional<Usuario> obtenerUsuario(Long id) {
     	Optional<Usuario> encontrado = this.usuarioRepository.findById(id);
         return encontrado;
+    }
+    
+    public Page<Usuario> buscarTodoPorNombreDescendente(Pageable pageable){
+    	return this.usuarioRepository.findAllByOrderByNombreDesc(pageable);
     }
 }
