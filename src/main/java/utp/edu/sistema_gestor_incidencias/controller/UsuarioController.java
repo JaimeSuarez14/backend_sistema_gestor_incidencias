@@ -42,7 +42,7 @@ public class UsuarioController {
     @GetMapping("/paginado")
     public PagedModel<Usuario> listarUsuariosPaginados(
     		@RequestParam(value="page", defaultValue = "0") int page,
-    		@RequestParam(value = "size", defaultValue = "20") int size
+    		@RequestParam(value = "size", defaultValue = "5") int size
     		) {
         Pageable pageable = PageRequest.of(page, size); 
         Page<Usuario> usuarios = this.usuarioService.buscarTodoPorNombreDescendente(pageable);
