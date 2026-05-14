@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
@@ -14,13 +15,18 @@ public class Incidencia {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	private Long id;
+	@NotNull
 	private String titulo;
+	@NotNull
 	private String descripcion;
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private EstadoIncidencia estado;
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="usuario_id")
 	private Usuario usuario;
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="tecnico_id")
 	private Usuario tecnico;

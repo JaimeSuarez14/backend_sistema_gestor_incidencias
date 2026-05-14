@@ -1,5 +1,8 @@
 package utp.edu.sistema_gestor_incidencias.model;
 
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,12 +15,18 @@ public class Usuario {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	private Long id;
+	@NotNull
 	private String nombre;
+	@NotNull
+	@Email
 	private String correo;
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Estado estado;
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Rol rol;
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Area area;
 	

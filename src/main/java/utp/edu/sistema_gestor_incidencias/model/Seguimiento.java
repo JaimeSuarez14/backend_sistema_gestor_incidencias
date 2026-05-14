@@ -1,6 +1,7 @@
 package utp.edu.sistema_gestor_incidencias.model;
 
 import java.util.Date;
+import jakarta.validation.constraints.NotNull;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,11 +17,15 @@ public class Seguimiento {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	private Long idSeguimiento;
+	@NotNull
 	@ManyToOne
 	@JoinColumn(name="incidencia_id")
 	private Incidencia incidencia;
+	@NotNull
 	private String comentario;
+	@NotNull
 	private Date fecha;
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Estado estado;
 	
