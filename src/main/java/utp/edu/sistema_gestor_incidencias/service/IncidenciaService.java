@@ -6,13 +6,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import utp.edu.sistema_gestor_incidencias.model.Incidencia;
+import utp.edu.sistema_gestor_incidencias.model.Usuario;
+import utp.edu.sistema_gestor_incidencias.repository.IncidenciaRepository;
 
 
 @Service
 public class IncidenciaService {
+	
+	@Autowired
+	private IncidenciaRepository incidenciaRepository;
 
     private List<Incidencia> incidencias = new ArrayList<>();
     private AtomicLong idGenerator = new AtomicLong(1);
@@ -44,5 +52,13 @@ public class IncidenciaService {
         return this.incidencias.stream()
                 .filter(i -> i.getId().equals(id))
                 .findFirst();
+    }
+    
+    public List<Incidencia> listarIncidenciasPaginado(Pageable pageable) {
+        return incidenciaRepository.findA();
+    }
+    
+    public Page<Usuario> buscarTodoPorNombreDescendente(Pageable pageable){
+    	return this.usuarioRepository.findAllByOrderByNombreDesc(pageable);
     }
 }

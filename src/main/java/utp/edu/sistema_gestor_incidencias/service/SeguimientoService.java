@@ -7,12 +7,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import utp.edu.sistema_gestor_incidencias.model.Seguimiento;
+import utp.edu.sistema_gestor_incidencias.repository.SeguimientoRepository;
 
 @Service
 public class SeguimientoService {
+	@Autowired
+	private SeguimientoRepository seguimientoRepository;
 
     private List<Seguimiento> seguimientos = new ArrayList<>();
     private AtomicLong idGenerator = new AtomicLong(1);
@@ -44,5 +48,9 @@ public class SeguimientoService {
         return this.seguimientos.stream()
                 .filter(s -> s.getIdSeguimiento().equals(id))
                 .findFirst();
+    }
+    
+    public List<Seguimiento> listarSeguimientosPaginado() {
+        return seguimientoRepository.findAll();
     }
 }
