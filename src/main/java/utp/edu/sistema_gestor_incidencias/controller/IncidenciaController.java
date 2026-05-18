@@ -3,11 +3,16 @@ package utp.edu.sistema_gestor_incidencias.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import utp.edu.sistema_gestor_incidencias.model.Incidencia;
+import utp.edu.sistema_gestor_incidencias.model.Usuario;
 import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 
@@ -63,6 +68,16 @@ public class IncidenciaController {
     public ResponseEntity<List<Incidencia>> listarIncidencias() {
         return ResponseEntity.ok(incidenteService.listarIncidencias());
     }
+    
+    @GetMapping("/paginado")
+    public PagedModel<Incidencia> listarIncidenciasPaginados(
+    		@RequestParam(value="page", defaultValue = "0") int page,
+    		@RequestParam(value = "size", defaultValue = "5") int size
+    		) {
+        Pageable pageable = PageRequest.of(page, size); 
+        Page<Incidencia> incidencias = this.incidenteService.listarIncidenciasPaginado(pageable);
+        return new PagedModel<>(incidencias);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerIncidencia(@PathVariable Long id) {
@@ -70,4 +85,6 @@ public class IncidenciaController {
         if (incidencia.isPresent()) return ResponseEntity.ok(incidencia.get());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Incidencia no encontrada con id: " + id);
     }
+    
+    
 }

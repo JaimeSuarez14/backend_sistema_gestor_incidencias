@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import utp.edu.sistema_gestor_incidencias.model.Incidencia;
-import utp.edu.sistema_gestor_incidencias.model.Usuario;
 import utp.edu.sistema_gestor_incidencias.repository.IncidenciaRepository;
 
 
@@ -54,11 +53,9 @@ public class IncidenciaService {
                 .findFirst();
     }
     
-    public List<Incidencia> listarIncidenciasPaginado(Pageable pageable) {
-        return incidenciaRepository.findA();
+    public Page<Incidencia> listarIncidenciasPaginado(Pageable pageable) {
+        return incidenciaRepository.findAllByOrderByTituloDesc(pageable);
     }
     
-    public Page<Usuario> buscarTodoPorNombreDescendente(Pageable pageable){
-    	return this.usuarioRepository.findAllByOrderByNombreDesc(pageable);
-    }
+    
 }
