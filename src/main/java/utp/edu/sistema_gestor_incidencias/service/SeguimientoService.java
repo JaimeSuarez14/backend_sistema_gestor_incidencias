@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +51,7 @@ public class SeguimientoService {
                 .findFirst();
     }
     
-    public List<Seguimiento> listarSeguimientosPaginado() {
-        return seguimientoRepository.findAll();
+    public Page<Seguimiento> listarSeguimientosPaginado(Pageable pageable) {
+        return seguimientoRepository.findAllByOrderByFechaDesc(pageable);
     }
 }
