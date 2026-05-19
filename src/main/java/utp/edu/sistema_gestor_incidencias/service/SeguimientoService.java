@@ -1,11 +1,9 @@
 package utp.edu.sistema_gestor_incidencias.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,36 +17,30 @@ public class SeguimientoService {
 	@Autowired
 	private SeguimientoRepository seguimientoRepository;
 
-    private List<Seguimiento> seguimientos = new ArrayList<>();
-    private AtomicLong idGenerator = new AtomicLong(1);
 
     public Seguimiento crearSeguimiento(Seguimiento seguimiento) {
-        seguimiento.setIdSeguimiento(idGenerator.getAndIncrement());
         Date fechaActual = new Date();
         seguimiento.setFecha(fechaActual);
-        this.seguimientos.add(seguimiento);
-        return seguimiento;
+        return seguimientoRepository.save(seguimiento);
     }
 
     public Seguimiento modificarSeguimiento(Long id, Seguimiento datosNuevos) {
-        Optional<Seguimiento> encontrado = obtenerSeguimiento(id);
+        Optional<Seguimiento> encontrado = seguimientoRepository.findById(id);;
         if (encontrado.isPresent()) {
             Seguimiento s = encontrado.get();
             s.setComentario(datosNuevos.getComentario());
             s.setEstado(datosNuevos.getEstado());
-            return s;
+            return seguimientoRepository.save(s);
         }
         return null;
     }
 
     public List<Seguimiento> listarSeguimientos() {
-        return Collections.unmodifiableList(seguimientos);
+        return seguimientoRepository.findAll();
     }
 
     public Optional<Seguimiento> obtenerSeguimiento(Long id) {
-        return this.seguimientos.stream()
-                .filter(s -> s.getIdSeguimiento().equals(id))
-                .findFirst();
+        return seguimientoRepository.findById(id);
     }
     
     public Page<Seguimiento> listarSeguimientosPaginado(Pageable pageable) {

@@ -1,10 +1,8 @@
 package utp.edu.sistema_gestor_incidencias.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,36 +19,29 @@ public class IncidenciaService {
 	@Autowired
 	private IncidenciaRepository incidenciaRepository;
 
-    private List<Incidencia> incidencias = new ArrayList<>();
-    private AtomicLong idGenerator = new AtomicLong(1);
-
     public Incidencia crearIncidencia(Incidencia incidencia) {
-        incidencia.setId(idGenerator.getAndIncrement());
-        this.incidencias.add(incidencia);
-        return incidencia;
+        return incidenciaRepository.save(incidencia);
     }
 
     public Incidencia modificarIncidencia(Long id, Incidencia datosNuevos) {
-        Optional<Incidencia> encontrada = obtenerIncidencia(id);
+        Optional<Incidencia> encontrada = incidenciaRepository.findById(id);;
         if (encontrada.isPresent()) {
             Incidencia i = encontrada.get();
             i.setTitulo(datosNuevos.getTitulo());
             i.setDescripcion(datosNuevos.getDescripcion());
             i.setEstado(datosNuevos.getEstado());
             i.setTecnico(datosNuevos.getTecnico());
-            return i;
+            return incidenciaRepository.save(i);
         }
         return null;
     }
 
     public List<Incidencia> listarIncidencias() {
-        return Collections.unmodifiableList(incidencias);
+        return incidenciaRepository.findAll();
     }
 
     public Optional<Incidencia> obtenerIncidencia(Long id) {
-        return this.incidencias.stream()
-                .filter(i -> i.getId().equals(id))
-                .findFirst();
+        return incidenciaRepository.findById(id);
     }
     
     public Page<Incidencia> listarIncidenciasPaginado(Pageable pageable) {
