@@ -2,17 +2,19 @@ package utp.edu.sistema_gestor_incidencias.model;
 
 import java.util.Date;
 import jakarta.validation.constraints.NotNull;
-
+import utp.edu.sistema_gestor_incidencias.enums.Estado;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
 @Entity
+@Table(name = "seguimientos")
 public class Seguimiento {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 

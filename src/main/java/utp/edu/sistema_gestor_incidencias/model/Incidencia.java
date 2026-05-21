@@ -6,11 +6,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import utp.edu.sistema_gestor_incidencias.enums.EstadoIncidencia;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
 @Entity
+@Table(name="incidencias")
 public class Incidencia {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) 

@@ -8,11 +8,16 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import utp.edu.sistema_gestor_incidencias.enums.Area;
+import utp.edu.sistema_gestor_incidencias.enums.Estado;
+import utp.edu.sistema_gestor_incidencias.enums.Rol;
 import utp.edu.sistema_gestor_incidencias.model.*;
 import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -32,8 +37,10 @@ class UsuarioControllerTest {
     private UsuarioService usuarioService;
 
     private Usuario usuarioEjemplo() {
-        return new Usuario(1L, "Abel Torres", "abel@utp.edu",
-                Rol.EMPLEADO, Area.SISTEMAS, Estado.ACTIVO);
+    	Set<Role> role = new HashSet<>();
+    	role.add(new Role(1L, "EMPLEADO"));
+        return new Usuario(1L,"abel" , "123456","Abel Torres", "abel@utp.edu",Estado.ACTIVO,Area.SISTEMAS,
+                role );
     }
 
     // Abel — POST /api/usuario
