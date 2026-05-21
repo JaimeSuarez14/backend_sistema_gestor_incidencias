@@ -1,13 +1,29 @@
 package utp.edu.sistema_gestor_incidencias.security.service.filters;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import utp.edu.sistema_gestor_incidencias.dto.login.LoginRequestDTO;
+import utp.edu.sistema_gestor_incidencias.model.Usuario;
+import utp.edu.sistema_gestor_incidencias.security.TokenJwtConfig;
+import tools.jackson.databind.ObjectMapper;
+
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -41,7 +57,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
-		User user = (User) authResult.getPrincipal();
+		Usuario user = (Usuario) authResult.getPrincipal();
 		String username = user.getUsername();
 
 		Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
