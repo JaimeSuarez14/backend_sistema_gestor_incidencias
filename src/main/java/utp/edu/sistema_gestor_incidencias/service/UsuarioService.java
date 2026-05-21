@@ -27,7 +27,7 @@ public class UsuarioService {
             Usuario u = encontrado.get();
             u.setNombre(datosNuevos.getNombre());
             u.setCorreo(datosNuevos.getCorreo());
-            u.setRol(datosNuevos.getRol());
+            u.setRoles(datosNuevos.getRoles());
             u.setArea(datosNuevos.getArea());
             u.setEstado(datosNuevos.getEstado());
             return this.usuarioRepository.save(u);

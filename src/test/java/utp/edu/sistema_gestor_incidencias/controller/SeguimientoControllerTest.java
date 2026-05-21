@@ -8,13 +8,19 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import utp.edu.sistema_gestor_incidencias.enums.Area;
+import utp.edu.sistema_gestor_incidencias.enums.Estado;
+import utp.edu.sistema_gestor_incidencias.enums.EstadoIncidencia;
+import utp.edu.sistema_gestor_incidencias.enums.Rol;
 import utp.edu.sistema_gestor_incidencias.model.*;
 import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.SeguimientoService;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -39,8 +45,10 @@ class SeguimientoControllerTest {
     private IncidenciaService incidenciaService;
 
     private Seguimiento seguimientoEjemplo() {
-        Usuario usuario = new Usuario(1L, "Stephani Lopez", "stephani@utp.edu",
-                Rol.TECNICO_NIVEL_2, Area.SISTEMAS, Estado.ACTIVO);
+    	Set<Role> role = new HashSet<>();
+    	role.add(new Role(1L, "TECNICO_NIVEL_2"));
+        Usuario usuario = new Usuario(1L, "stephani" ,"123456", "Stephani Lopez", "stephani@utp.edu",Estado.ACTIVO, Area.SISTEMAS,
+                role );
         Incidencia incidencia = new Incidencia(1L, "PC no enciende", "Descripcion",
                 EstadoIncidencia.ABIERTO, usuario, usuario);
         return new Seguimiento(1L, incidencia, "Revisando el equipo", new Date(), Estado.ACTIVO);
@@ -121,9 +129,10 @@ class SeguimientoControllerTest {
     @Test
     void listarSeguimientos_retornaMultiplesSeguimientos() throws Exception {
         Seguimiento s1 = seguimientoEjemplo();
-
-        Usuario usuario = new Usuario(2L, "Jamil Alarcon", "jml@utp.edu",
-                Rol.TECNICO_NIVEL_2, Area.SISTEMAS, Estado.ACTIVO);
+        Set<Role> role = new HashSet<>();
+    	role.add(new Role(1L, "TECNICO_NIVEL_2"));
+        Usuario usuario = new Usuario(2L, "jamil", "123456", "Jamil Alarcon", "jml@utp.edu", Estado.ACTIVO,Area.SISTEMAS,
+                role );
         Incidencia incidencia = new Incidencia(2L, "Monitor falla", "Descripcion 2",
                 EstadoIncidencia.ABIERTO, usuario, usuario);
         Seguimiento s2 = new Seguimiento(2L, incidencia, "Cambio de monitor", new Date(), Estado.ACTIVO);

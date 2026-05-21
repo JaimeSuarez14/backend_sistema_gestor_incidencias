@@ -8,12 +8,18 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import utp.edu.sistema_gestor_incidencias.enums.Area;
+import utp.edu.sistema_gestor_incidencias.enums.Estado;
+import utp.edu.sistema_gestor_incidencias.enums.EstadoIncidencia;
+import utp.edu.sistema_gestor_incidencias.enums.Rol;
 import utp.edu.sistema_gestor_incidencias.model.*;
 import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -36,13 +42,17 @@ class IncidenteControllerTest {
     private UsuarioService usuarioService; 
 
     private Usuario usuarioEjemplo() {
-        return new Usuario(1L, "Jaime Ruiz", "jaime@utp.edu",
-                Rol.EMPLEADO, Area.CONTABILIDAD, Estado.ACTIVO);
+    	Set<Role> role = new HashSet<>();
+    	role.add(new Role(1L, "Empleado"));
+    	
+        return new Usuario(1L, "jaime", "123456","Jaime Ruiz", "jaime@utp.edu", Estado.ACTIVO, Area.CONTABILIDAD, role  );
     }
     
     private Usuario tecnicoEjemplo() {
-        return new Usuario(2L, "Johan Gonzales", "johan@utp.edu",
-                Rol.TECNICO_NIVEL_1, Area.SISTEMAS, Estado.ACTIVO);
+    	Set<Role> role = new HashSet<>();
+    	role.add(new Role(1L, "TECNICO_NIVEL_1"));
+        return new Usuario(2L, "johan", "123456", "Johan Gonzales", "johan@utp.edu",Estado.ACTIVO, Area.SISTEMAS,
+                role );
     }
 
     private Incidencia incidenciaEjemplo() {
