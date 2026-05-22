@@ -1,4 +1,4 @@
-package utp.edu.sistema_gestor_incidencias.security.service.filters;
+package utp.edu.sistema_gestor_incidencias.security.filters;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import io.jsonwebtoken.Claims;
@@ -33,6 +34,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		this.authenticationManager = authenticationManager;
 	}
 
+	
+	//por defecto /login la endpoint
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException {
@@ -57,7 +60,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
-		Usuario user = (Usuario) authResult.getPrincipal();
+		User user = (User) authResult.getPrincipal();
 		String username = user.getUsername();
 
 		Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
