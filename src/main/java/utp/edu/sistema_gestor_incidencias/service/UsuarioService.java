@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
 import utp.edu.sistema_gestor_incidencias.repository.UsuarioRepository;
+import utp.edu.sistema_gestor_incidencias.security.utils.SecurityUtils;
 
 @Service
 public class UsuarioService {
@@ -38,6 +39,12 @@ public class UsuarioService {
 
     public Optional<Usuario> obtenerUsuario(Long id) {
     	Optional<Usuario> encontrado = this.usuarioRepository.findById(id);
+        return encontrado;
+    }
+    
+    public Optional<Usuario> obtenerUsuarioUsername() {
+    	String username = SecurityUtils.getCurrentUsername();
+    	Optional<Usuario> encontrado = usuarioRepository.findByUsername(username);
         return encontrado;
     }
     

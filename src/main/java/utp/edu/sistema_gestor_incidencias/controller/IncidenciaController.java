@@ -28,11 +28,8 @@ public class IncidenciaController {
     
     @PostMapping
     public ResponseEntity< ? > crearIncidencia(@RequestBody Incidencia incidencia ){
-		
-		Long idUsu  = incidencia.getUsuario().getId();
 		Long idTec  = incidencia.getTecnico().getId();
-		
-		var usuario =  usuarioService.obtenerUsuario(idUsu);
+		var usuario =  usuarioService.obtenerUsuarioUsername();
 		var tecnico =  usuarioService.obtenerUsuario(idTec);
 		
 		if(!usuario.isPresent() | !tecnico.isPresent()) 
