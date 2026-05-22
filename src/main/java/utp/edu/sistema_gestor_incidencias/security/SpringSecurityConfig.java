@@ -42,9 +42,9 @@ public class SpringSecurityConfig {
 		return httpSecurity
 				.authorizeHttpRequests( (authorize)-> authorize
 						.requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-						.requestMatchers(HttpMethod.POST, "/api/users/{id}/role").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.POST, "/api/courses").hasRole("TEACHER")
-						.requestMatchers(HttpMethod.PUT, "/api/courses/{id}").hasRole("TEACHER")
+						.requestMatchers(HttpMethod.OPTIONS, "/api/usuario/**").hasRole("ADMIN")
+						.requestMatchers(HttpMethod.GET, "/api/incidencia").hasAnyRole("ADMIN", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
+						.requestMatchers(HttpMethod.POST, "/api/incidencia").hasRole("EMPLEADO")
 						.anyRequest().authenticated())
 						.addFilter(jwtAuthenticationFilter)
 						.addFilter(jwtValidationFilter)
