@@ -1,4 +1,4 @@
-package utp.edu.sistema_gestor_incidencias.security.service.filters;
+package utp.edu.sistema_gestor_incidencias.security.filters;
 
 import java.io.IOException;
 import java.util.Collection;

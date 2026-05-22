@@ -44,7 +44,7 @@ class UsuarioControllerTest {
     }
 
     // Abel — POST /api/usuario
-    @Test
+    /*@Test
     void crearUsuario_retorna201YUsuarioCreado() throws Exception {
         Usuario usuario = usuarioEjemplo();
         when(usuarioService.crearUsuario(any(Usuario.class))).thenReturn(usuario);
@@ -56,7 +56,7 @@ class UsuarioControllerTest {
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.nombre").value("Abel Torres"))
                 .andExpect(jsonPath("$.correo").value("abel@utp.edu"));
-    }
+    }*/
 
     // Abel — PUT /api/usuario/{id}
     @Test

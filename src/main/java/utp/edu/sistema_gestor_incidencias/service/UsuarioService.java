@@ -16,10 +16,6 @@ public class UsuarioService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
-	
-    public Usuario crearUsuario(Usuario usuario) {
-       return this.usuarioRepository.save(usuario);
-    }
 
     public Usuario modificarUsuario(Long id, Usuario datosNuevos) {
         Optional<Usuario> encontrado = this.usuarioRepository.findById(id);

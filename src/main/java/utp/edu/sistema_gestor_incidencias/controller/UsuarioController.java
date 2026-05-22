@@ -22,11 +22,6 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @PostMapping
-    public ResponseEntity<Usuario> crearUsuario(@RequestBody Usuario usuario) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.crearUsuario(usuario));
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<?> modificarUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
         Usuario modificado = usuarioService.modificarUsuario(id, usuario);
