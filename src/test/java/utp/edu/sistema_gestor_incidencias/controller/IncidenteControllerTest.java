@@ -12,7 +12,7 @@ import utp.edu.sistema_gestor_incidencias.dto.incidencia.IncidenciaDTO;
 import utp.edu.sistema_gestor_incidencias.enums.Area;
 import utp.edu.sistema_gestor_incidencias.enums.Estado;
 import utp.edu.sistema_gestor_incidencias.enums.EstadoIncidencia;
-import utp.edu.sistema_gestor_incidencias.enums.Rol;
+import utp.edu.sistema_gestor_incidencias.mappers.IncidenciaMapper;
 import utp.edu.sistema_gestor_incidencias.model.*;
 import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
@@ -35,6 +35,9 @@ class IncidenteControllerTest {
     private MockMvc mockMvc;
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @MockitoBean
+    private IncidenciaMapper incidenciaMapper;
 
     @MockitoBean
     private IncidenciaService incidenteService;
