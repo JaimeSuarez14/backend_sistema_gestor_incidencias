@@ -3,14 +3,16 @@ package utp.edu.sistema_gestor_incidencias.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import utp.edu.sistema_gestor_incidencias.enums.Area;
 import utp.edu.sistema_gestor_incidencias.enums.Estado;
-import utp.edu.sistema_gestor_incidencias.enums.Rol;
+import utp.edu.sistema_gestor_incidencias.mappers.UsuarioMapper;
 import utp.edu.sistema_gestor_incidencias.model.*;
 import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 
@@ -25,7 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(UsuarioController.class)
+@WebMvcTest(controllers = UsuarioController.class,  excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class UsuarioControllerTest {
 
     @Autowired
@@ -35,6 +37,9 @@ class UsuarioControllerTest {
 
     @MockitoBean
     private UsuarioService usuarioService;
+
+    @MockitoBean
+    private UsuarioMapper usuarioMapper;
 
     private Usuario usuarioEjemplo() {
     	Set<Role> role = new HashSet<>();
@@ -60,6 +65,7 @@ class UsuarioControllerTest {
 
     // Abel — PUT /api/usuario/{id}
     @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void modificarUsuario_retorna200YUsuarioModificado() throws Exception {
         Usuario usuario = usuarioEjemplo();
         usuario.setNombre("Abel Modificado");

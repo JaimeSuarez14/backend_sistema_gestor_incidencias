@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import utp.edu.sistema_gestor_incidencias.enums.Area;
 import utp.edu.sistema_gestor_incidencias.enums.Estado;
 import utp.edu.sistema_gestor_incidencias.enums.EstadoIncidencia;
-import utp.edu.sistema_gestor_incidencias.enums.Rol;
+import utp.edu.sistema_gestor_incidencias.mappers.SeguimientoMapper;
 import utp.edu.sistema_gestor_incidencias.model.*;
 import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.SeguimientoService;
@@ -33,168 +33,171 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(SeguimientoController.class)
 class SeguimientoControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+        private ObjectMapper objectMapper = new ObjectMapper();
 
-    @MockitoBean
-    private SeguimientoService seguimientoService;
+        @MockitoBean
+        private SeguimientoService seguimientoService;
 
-    @MockitoBean
-    private IncidenciaService incidenciaService;
+        @MockitoBean
+        private IncidenciaService incidenciaService;
 
-    private Seguimiento seguimientoEjemplo() {
-    	Set<Role> role = new HashSet<>();
-    	role.add(new Role(1L, "TECNICO_NIVEL_2"));
-        Usuario usuario = new Usuario(1L, "stephani" ,"123456", "Stephani Lopez", "stephani@utp.edu",Estado.ACTIVO, Area.SISTEMAS,
-                role );
-        Incidencia incidencia = new Incidencia(1L, "PC no enciende", "Descripcion",
-                EstadoIncidencia.ABIERTO, usuario, usuario);
-        return new Seguimiento(1L, incidencia, "Revisando el equipo", new Date(), Estado.ACTIVO, usuario);
-    }
+        @MockitoBean
+        private SeguimientoMapper seguimientoMapper;
 
-    // Stephani — POST /api/seguimiento
-    @Test
-    void crearSeguimiento_retorna201YSeguimientoCreado() throws Exception {
-        Seguimiento seguimiento = seguimientoEjemplo();
-        when(incidenciaService.obtenerIncidencia(1L)).thenReturn(Optional.of(seguimiento.getIncidencia()));
-        when(seguimientoService.crearSeguimiento(any(Seguimiento.class))).thenReturn(seguimiento);
+        private Seguimiento seguimientoEjemplo() {
+                Set<Role> role = new HashSet<>();
+                role.add(new Role(1L, "TECNICO_NIVEL_2"));
+                Usuario usuario = new Usuario(1L, "stephani", "123456", "Stephani Lopez", "stephani@utp.edu",
+                                Estado.ACTIVO, Area.SISTEMAS,
+                                role);
+                Incidencia incidencia = new Incidencia(1L, "PC no enciende", "Descripcion",
+                                EstadoIncidencia.ABIERTO, usuario, usuario);
+                return new Seguimiento(1L, incidencia, "Revisando el equipo", new Date(), Estado.ACTIVO, usuario);
+        }
 
-        mockMvc.perform(post("/api/seguimiento")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(seguimiento)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.idSeguimiento").value(1L))
-                .andExpect(jsonPath("$.comentario").value("Revisando el equipo"));
-    }
+        // Stephani — POST /api/seguimiento
+        @Test
+        void crearSeguimiento_retorna201YSeguimientoCreado() throws Exception {
+                Seguimiento seguimiento = seguimientoEjemplo();
+                when(incidenciaService.obtenerIncidencia(1L)).thenReturn(Optional.of(seguimiento.getIncidencia()));
+                when(seguimientoService.crearSeguimiento(any(Seguimiento.class))).thenReturn(seguimiento);
 
-    // Stephani — PUT /api/seguimiento/{id}
-    @Test
-    void modificarSeguimiento_retorna200YSeguimientoModificado() throws Exception {
-        Seguimiento seguimiento = seguimientoEjemplo();
-        seguimiento.setComentario("Equipo reparado");
-        when(incidenciaService.obtenerIncidencia(1L)).thenReturn(Optional.of(seguimiento.getIncidencia()));
-        when(seguimientoService.modificarSeguimiento(eq(1L), any(Seguimiento.class))).thenReturn(seguimiento);
+                mockMvc.perform(post("/api/seguimiento")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(seguimiento)))
+                                .andExpect(status().isCreated())
+                                .andExpect(jsonPath("$.idSeguimiento").value(1L))
+                                .andExpect(jsonPath("$.comentario").value("Revisando el equipo"));
+        }
 
-        mockMvc.perform(put("/api/seguimiento/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(seguimiento)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.comentario").value("Equipo reparado"));
-    }
+        // Stephani — PUT /api/seguimiento/{id}
+        @Test
+        void modificarSeguimiento_retorna200YSeguimientoModificado() throws Exception {
+                Seguimiento seguimiento = seguimientoEjemplo();
+                seguimiento.setComentario("Equipo reparado");
+                when(incidenciaService.obtenerIncidencia(1L)).thenReturn(Optional.of(seguimiento.getIncidencia()));
+                when(seguimientoService.modificarSeguimiento(eq(1L), any(Seguimiento.class))).thenReturn(seguimiento);
 
-    // Jamil — GET /api/seguimiento
-    @Test
-    void listarSeguimientos_retorna200YListaDeSeguimientos() throws Exception {
-        when(seguimientoService.listarSeguimientos()).thenReturn(List.of(seguimientoEjemplo()));
+                mockMvc.perform(put("/api/seguimiento/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(seguimiento)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.comentario").value("Equipo reparado"));
+        }
 
-        mockMvc.perform(get("/api/seguimiento"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$[0].comentario").value("Revisando el equipo"));
-    }
+        // Jamil — GET /api/seguimiento
+        @Test
+        void listarSeguimientos_retorna200YListaDeSeguimientos() throws Exception {
+                when(seguimientoService.listarSeguimientos()).thenReturn(List.of(seguimientoEjemplo()));
 
-    // Jamil — GET /api/seguimiento/{id}
-    @Test
-    void obtenerSeguimiento_retorna200CuandoExiste() throws Exception {
-        when(seguimientoService.obtenerSeguimiento(1L)).thenReturn(Optional.of(seguimientoEjemplo()));
+                mockMvc.perform(get("/api/seguimiento"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.length()").value(1))
+                                .andExpect(jsonPath("$[0].comentario").value("Revisando el equipo"));
+        }
 
-        mockMvc.perform(get("/api/seguimiento/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.idSeguimiento").value(1L));
-    }
+        // Jamil — GET /api/seguimiento/{id}
+        @Test
+        void obtenerSeguimiento_retorna200CuandoExiste() throws Exception {
+                when(seguimientoService.obtenerSeguimiento(1L)).thenReturn(Optional.of(seguimientoEjemplo()));
 
-    @Test
-    void obtenerSeguimiento_retorna404CuandoNoExiste() throws Exception {
-        when(seguimientoService.obtenerSeguimiento(99L)).thenReturn(Optional.empty());
+                mockMvc.perform(get("/api/seguimiento/1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.idSeguimiento").value(1L));
+        }
 
-        mockMvc.perform(get("/api/seguimiento/99"))
-                .andExpect(status().isNotFound());
-     }
-    
-    
+        @Test
+        void obtenerSeguimiento_retorna404CuandoNoExiste() throws Exception {
+                when(seguimientoService.obtenerSeguimiento(99L)).thenReturn(Optional.empty());
 
+                mockMvc.perform(get("/api/seguimiento/99"))
+                                .andExpect(status().isNotFound());
+        }
 
-    // Seguimiento // 
-    @Test
-    void listarSeguimientos_retornaListaVacia() throws Exception {
-        when(seguimientoService.listarSeguimientos()).thenReturn(List.of());
+        // Seguimiento //
+        @Test
+        void listarSeguimientos_retornaListaVacia() throws Exception {
+                when(seguimientoService.listarSeguimientos()).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/seguimiento"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
-    }
+                mockMvc.perform(get("/api/seguimiento"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.length()").value(0));
+        }
 
-    @Test
-    void listarSeguimientos_retornaMultiplesSeguimientos() throws Exception {
-        Seguimiento s1 = seguimientoEjemplo();
-        Set<Role> role = new HashSet<>();
-    	role.add(new Role(1L, "TECNICO_NIVEL_2"));
-        Usuario usuario = new Usuario(2L, "jamil", "123456", "Jamil Alarcon", "jml@utp.edu", Estado.ACTIVO,Area.SISTEMAS,
-                role );
-        Incidencia incidencia = new Incidencia(2L, "Monitor falla", "Descripcion 2",
-                EstadoIncidencia.ABIERTO, usuario, usuario);
-        Seguimiento s2 = new Seguimiento(2L, incidencia, "Cambio de monitor", new Date(), Estado.ACTIVO, usuario);
+        @Test
+        void listarSeguimientos_retornaMultiplesSeguimientos() throws Exception {
+                Seguimiento s1 = seguimientoEjemplo();
+                Set<Role> role = new HashSet<>();
+                role.add(new Role(1L, "TECNICO_NIVEL_2"));
+                Usuario usuario = new Usuario(2L, "jamil", "123456", "Jamil Alarcon", "jml@utp.edu", Estado.ACTIVO,
+                                Area.SISTEMAS,
+                                role);
+                Incidencia incidencia = new Incidencia(2L, "Monitor falla", "Descripcion 2",
+                                EstadoIncidencia.ABIERTO, usuario, usuario);
+                Seguimiento s2 = new Seguimiento(2L, incidencia, "Cambio de monitor", new Date(), Estado.ACTIVO,
+                                usuario);
 
-        when(seguimientoService.listarSeguimientos()).thenReturn(List.of(s1, s2));
+                when(seguimientoService.listarSeguimientos()).thenReturn(List.of(s1, s2));
 
-        mockMvc.perform(get("/api/seguimiento"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2));
-    }
+                mockMvc.perform(get("/api/seguimiento"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.length()").value(2));
+        }
 
-    @Test
-    void obtenerSeguimiento_validaComentarioCuandoExiste() throws Exception {
-        when(seguimientoService.obtenerSeguimiento(1L)).thenReturn(Optional.of(seguimientoEjemplo()));
+        @Test
+        void obtenerSeguimiento_validaComentarioCuandoExiste() throws Exception {
+                when(seguimientoService.obtenerSeguimiento(1L)).thenReturn(Optional.of(seguimientoEjemplo()));
 
-        mockMvc.perform(get("/api/seguimiento/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.idSeguimiento").value(1L))
-                .andExpect(jsonPath("$.comentario").value("Revisando el equipo"));
-    }
+                mockMvc.perform(get("/api/seguimiento/1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.idSeguimiento").value(1L))
+                                .andExpect(jsonPath("$.comentario").value("Revisando el equipo"));
+        }
 
-    @Test
-    void obtenerSeguimiento_idInvalido_retorna404() throws Exception {
-        when(seguimientoService.obtenerSeguimiento(-1L)).thenReturn(Optional.empty());
+        @Test
+        void obtenerSeguimiento_idInvalido_retorna404() throws Exception {
+                when(seguimientoService.obtenerSeguimiento(-1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/seguimiento/-1"))
-                .andExpect(status().isNotFound());
-    }
+                mockMvc.perform(get("/api/seguimiento/-1"))
+                                .andExpect(status().isNotFound());
+        }
 
-    @Test
-    void crearSeguimiento_cuandoIncidenciaNoExiste_retorna404() throws Exception {
-        var seguimiento = seguimientoEjemplo();
-        var incidenciaInexistente = new Incidencia();
-        incidenciaInexistente.setId(99L); // ID que no existe
-        seguimiento.setIncidencia(incidenciaInexistente);
+        @Test
+        void crearSeguimiento_cuandoIncidenciaNoExiste_retorna404() throws Exception {
+                var seguimiento = seguimientoEjemplo();
+                var incidenciaInexistente = new Incidencia();
+                incidenciaInexistente.setId(99L); // ID que no existe
+                seguimiento.setIncidencia(incidenciaInexistente);
 
-        // 2. Simular el comportamiento del servicio: el Optional debe estar vacío
-        when(incidenciaService.obtenerIncidencia(99L)).thenReturn(Optional.empty());
+                // 2. Simular el comportamiento del servicio: el Optional debe estar vacío
+                when(incidenciaService.obtenerIncidencia(99L)).thenReturn(Optional.empty());
 
-        // 3. Ejecutar la petición y verificar
-        mockMvc.perform(post("/api/seguimiento")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(seguimiento)))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("Incidencia no encontrado con ese ID"));
-        
-        // Verificación opcional: asegurar que el servicio de seguimiento NUNCA se llamó
-        verify(seguimientoService, never()).crearSeguimiento(any(Seguimiento.class));
-    }
+                // 3. Ejecutar la petición y verificar
+                mockMvc.perform(post("/api/seguimiento")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(seguimiento)))
+                                .andExpect(status().isNotFound())
+                                .andExpect(content().string("Incidencia no encontrado con ese ID"));
 
-     @Test
-    void modificarSeguimiento_cuandoIncidenciaNoExiste_retorna404() throws Exception {
-        var seguimiento = seguimientoEjemplo();
-        seguimiento.setComentario("Equipo reparado, puede recogerlo.");
-        seguimiento.getIncidencia().setId(99L); // ID que no existe
-        when(incidenciaService.obtenerIncidencia(99L)).thenReturn(Optional.empty());
-        when(seguimientoService.modificarSeguimiento(eq(1L), any(Seguimiento.class))).thenReturn(seguimiento);
+                // Verificación opcional: asegurar que el servicio de seguimiento NUNCA se llamó
+                verify(seguimientoService, never()).crearSeguimiento(any(Seguimiento.class));
+        }
 
-        mockMvc.perform(put("/api/seguimiento/99")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(seguimiento)))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("Incidencia no encontrado con ese ID"));
-    }
+        @Test
+        void modificarSeguimiento_cuandoIncidenciaNoExiste_retorna404() throws Exception {
+                var seguimiento = seguimientoEjemplo();
+                seguimiento.setComentario("Equipo reparado, puede recogerlo.");
+                seguimiento.getIncidencia().setId(99L); // ID que no existe
+                when(incidenciaService.obtenerIncidencia(99L)).thenReturn(Optional.empty());
+                when(seguimientoService.modificarSeguimiento(eq(1L), any(Seguimiento.class))).thenReturn(seguimiento);
+
+                mockMvc.perform(put("/api/seguimiento/99")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(seguimiento)))
+                                .andExpect(status().isNotFound())
+                                .andExpect(content().string("Incidencia no encontrado con ese ID"));
+        }
 }

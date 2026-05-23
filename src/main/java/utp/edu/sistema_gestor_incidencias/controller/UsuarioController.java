@@ -11,8 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import practica.spring_security.dto.roles.RoleDTO;
 import utp.edu.sistema_gestor_incidencias.dto.ApiResponse;
+import utp.edu.sistema_gestor_incidencias.dto.role.RoleDTO;
 import utp.edu.sistema_gestor_incidencias.dto.usuario.UsuarioResponseDto;
 import utp.edu.sistema_gestor_incidencias.mappers.UsuarioMapper;
 import utp.edu.sistema_gestor_incidencias.model.Usuario;

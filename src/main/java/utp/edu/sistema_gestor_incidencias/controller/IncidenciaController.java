@@ -1,5 +1,6 @@
 package utp.edu.sistema_gestor_incidencias.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import utp.edu.sistema_gestor_incidencias.dto.incidencia.IncidenciaDTO;
+import utp.edu.sistema_gestor_incidencias.dto.incidencia.IncidenciaResponseDTO;
 import utp.edu.sistema_gestor_incidencias.exception.UsuarioNoEncontradoException;
+import utp.edu.sistema_gestor_incidencias.mappers.IncidenciaMapper;
 import utp.edu.sistema_gestor_incidencias.model.Incidencia;
 import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
@@ -27,12 +30,16 @@ public class IncidenciaController {
     @Autowired
     private UsuarioService usuarioService;
     
+    @Autowired
+    private IncidenciaMapper incidenciaMapper;
+    
     @PostMapping
     public ResponseEntity< ? > crearIncidencia(@RequestBody IncidenciaDTO incidencia ){
     	
     	try {
     		var newIncidencia = this.incidenteService.crearIncidencia(incidencia);
-    		return ResponseEntity.status(HttpStatus.CREATED).body(newIncidencia);
+    		IncidenciaResponseDTO response =  incidenciaMapper.toResponseDto(newIncidencia);
+    		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 			
     	} catch (IllegalArgumentException e) {
 
@@ -85,7 +92,12 @@ public class IncidenciaController {
     public ResponseEntity<?> misIncidencias() {
     	try {
     		var incidencias = incidenteService.misIncidencias();
-            return ResponseEntity.ok(incidencias);
+    		List<IncidenciaResponseDTO> dtos = new ArrayList<IncidenciaResponseDTO>();
+    		for (Incidencia incidencia : incidencias) {
+    			var incidenciaResponseDTO = incidenciaMapper.toResponseDto(incidencia);
+    			dtos.add(incidenciaResponseDTO);
+			}
+            return ResponseEntity.ok(dtos);
 		} catch ( UsuarioNoEncontradoException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}

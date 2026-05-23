@@ -21,7 +21,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import utp.edu.sistema_gestor_incidencias.dto.login.LoginRequestDTO;
-import utp.edu.sistema_gestor_incidencias.model.Usuario;
 import utp.edu.sistema_gestor_incidencias.security.TokenJwtConfig;
 import tools.jackson.databind.ObjectMapper;
 
