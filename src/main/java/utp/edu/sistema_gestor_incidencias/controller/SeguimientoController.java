@@ -1,5 +1,6 @@
 package utp.edu.sistema_gestor_incidencias.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import utp.edu.sistema_gestor_incidencias.dto.seguimiento.SeguimientoDTO;
+import utp.edu.sistema_gestor_incidencias.dto.seguimiento.SeguimientoResponseDto;
 import utp.edu.sistema_gestor_incidencias.exception.IncidenciaNotFoundException;
 import utp.edu.sistema_gestor_incidencias.exception.UsuarioNoEncontradoException;
 import utp.edu.sistema_gestor_incidencias.mappers.SeguimientoMapper;
@@ -33,7 +35,8 @@ public class SeguimientoController {
     	try {
     		Seguimiento incidencia = seguimientoMapper.toEntity(dto);
     		var result = seguimientoService.crearSeguimiento(incidencia);
-            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    		SeguimientoResponseDto response =  seguimientoMapper.toResponseDto(result);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
     	} catch (UsuarioNoEncontradoException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  	
     	} catch (IncidenciaNotFoundException e) {
@@ -41,7 +44,6 @@ public class SeguimientoController {
     	}catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( e.getMessage()); 
 		}
-    	
     }
 
     @PutMapping("/{id}")
@@ -82,8 +84,13 @@ public class SeguimientoController {
     @GetMapping("/{id}/seguimientos")
     public ResponseEntity<?> obtenerMisSeguimientos(@PathVariable Long id) {
     	try {
-    		var seguimientos = seguimientoService.misSeguimientos(id);
-            return ResponseEntity.ok(seguimientos);
+    		List<Seguimiento> seguimientos = seguimientoService.misSeguimientos(id);
+    		List<SeguimientoResponseDto> listDto = new ArrayList<>();
+    		for (Seguimiento seguimiento : seguimientos) {
+				SeguimientoResponseDto dto = seguimientoMapper.toResponseDto(seguimiento);
+				listDto.add(dto);
+			}
+            return ResponseEntity.ok(listDto);
     	} catch (IncidenciaNotFoundException e) {
     		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); 
     	}catch (Exception e) {

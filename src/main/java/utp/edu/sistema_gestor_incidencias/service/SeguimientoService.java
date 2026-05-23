@@ -83,6 +83,7 @@ public class SeguimientoService {
     public List<Seguimiento> misSeguimientos(Long id){
     	Incidencia incidencia = incidenciaRepository.findById(id).
     			orElseThrow(()->new IncidenciaNotFoundException( "Incidencia no encontrada" ));
-    	return seguimientoRepository.findByIncidencia(incidencia);
+    	return seguimientoRepository.findByIncidenciaAndUsuarioOrTecnico(incidencia, incidencia.getUsuario(),
+    			incidencia.getTecnico());
     }
 }
