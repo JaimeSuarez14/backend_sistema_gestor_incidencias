@@ -28,13 +28,19 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
+
 @WebMvcTest(IncidenciaController.class)
+@WithMockUser(username = "testuser", roles = {"EMPLEADO"})
 class IncidenteControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
 
     @MockitoBean
     private IncidenciaMapper incidenciaMapper;
@@ -44,6 +50,14 @@ class IncidenteControllerTest {
     
     @MockitoBean
     private UsuarioService usuarioService; 
+
+    @MockitoBean
+    private AuthenticationManager authenticationManager;
+
+    @MockitoBean
+    private UserDetailsService userDetailsService; 
+
+
 
     private Usuario usuarioEjemplo() {
     	Set<Role> role = new HashSet<>();

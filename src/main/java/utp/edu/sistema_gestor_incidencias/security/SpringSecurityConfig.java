@@ -40,6 +40,7 @@ public class SpringSecurityConfig {
 		JwtValidationFilter jwtValidationFilter = new JwtValidationFilter(manager);
 		
 		return httpSecurity
+		.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests( (authorize)-> authorize
 						.requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/incidencia/misIncidencias").hasAnyRole("EMPLEADO", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
@@ -52,7 +53,6 @@ public class SpringSecurityConfig {
 						.anyRequest().authenticated())
 						.addFilter(jwtAuthenticationFilter)
 						.addFilter(jwtValidationFilter)
-						.csrf(AbstractHttpConfigurer::disable)
 						.sessionManagement( manegement -> manegement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 						.build();
 	}
