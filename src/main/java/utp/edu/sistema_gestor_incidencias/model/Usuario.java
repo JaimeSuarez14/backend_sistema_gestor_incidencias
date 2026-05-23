@@ -126,6 +126,8 @@ public class Usuario {
 		this.passwordHash = passwordHash;
 	}
 
-	
+	public void addRole(Role role){
+		this.roles.add(role);
+	}
 	
 }

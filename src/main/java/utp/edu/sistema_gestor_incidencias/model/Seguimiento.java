@@ -30,14 +30,19 @@ public class Seguimiento {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private Estado estado;
+	@NotNull
+	@ManyToOne
+	@JoinColumn(name="usuario_id")
+	private Usuario usuario;
 	
-	public Seguimiento(Long idSeguimiento, Incidencia incidencia, String comentario, Date fecha, Estado estado) {
+	public Seguimiento(Long idSeguimiento, Incidencia incidencia, String comentario, Date fecha, Estado estado, Usuario usuario) {
 		super();
 		this.idSeguimiento = idSeguimiento;
 		this.incidencia = incidencia;
 		this.comentario = comentario;
 		this.fecha = fecha;
 		this.estado = estado;
+		this.usuario = usuario;
 	}
 	
 	
@@ -91,6 +96,16 @@ public class Seguimiento {
 
 	public void setEstado(Estado estado) {
 		this.estado = estado;
+	}
+
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 	
 	

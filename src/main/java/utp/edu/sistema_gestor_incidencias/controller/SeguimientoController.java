@@ -11,9 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import utp.edu.sistema_gestor_incidencias.model.Incidencia;
+import utp.edu.sistema_gestor_incidencias.dto.seguimiento.SeguimientoDTO;
+import utp.edu.sistema_gestor_incidencias.exception.IncidenciaNotFoundException;
+import utp.edu.sistema_gestor_incidencias.exception.UsuarioNoEncontradoException;
+import utp.edu.sistema_gestor_incidencias.mappers.SeguimientoMapper;
 import utp.edu.sistema_gestor_incidencias.model.Seguimiento;
-import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.SeguimientoService;
 
 @RestController
@@ -22,31 +24,37 @@ public class SeguimientoController {
 
     @Autowired
     private SeguimientoService seguimientoService;
-
+    
     @Autowired
-    private IncidenciaService incidenciaService;
+    private SeguimientoMapper seguimientoMapper;
 
     @PostMapping
-    public ResponseEntity< ? > crearSeguimiento(@RequestBody Seguimiento seguimiento) {
-        var  incidencia = incidenciaService.obtenerIncidencia(seguimiento.getIncidencia().getId());
-        
-		if(!incidencia.isPresent() ) 
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Incidencia no encontrado con ese ID") ;
-        seguimiento.setIncidencia(incidencia.get());
-        return ResponseEntity.status(HttpStatus.CREATED).body(seguimientoService.crearSeguimiento(seguimiento));
+    public ResponseEntity< ? > crearSeguimiento(@RequestBody SeguimientoDTO dto) {
+    	try {
+    		Seguimiento incidencia = seguimientoMapper.toEntity(dto);
+    		var result = seguimientoService.crearSeguimiento(incidencia);
+            return ResponseEntity.status(HttpStatus.CREATED).body(result);
+    	} catch (UsuarioNoEncontradoException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());  	
+    	} catch (IncidenciaNotFoundException e) {
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); 
+    	}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( e.getMessage()); 
+		}
+    	
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> modificarSeguimiento(@PathVariable Long id, @RequestBody Seguimiento seguimiento) {
-
-        var  incidencia = incidenciaService.obtenerIncidencia(seguimiento.getIncidencia().getId());
-		if(!incidencia.isPresent() ) 
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Incidencia no encontrado con ese ID") ;
-        seguimiento.setIncidencia(incidencia.get());
-
-        Seguimiento modificado = seguimientoService.modificarSeguimiento(id, seguimiento);
-        if (modificado != null) return ResponseEntity.ok(modificado);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Seguimiento no encontrado con id: " + id);
+		try {
+			Seguimiento modificado = seguimientoService.modificarSeguimiento(id, seguimiento);
+	        if (modificado != null) return ResponseEntity.ok(modificado);
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Seguimiento no encontrado con id: " + id);
+		} catch (IncidenciaNotFoundException e) {
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); 
+    	}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( e.getMessage()); 
+		}
     }
 
     @GetMapping
@@ -71,5 +79,16 @@ public class SeguimientoController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Seguimiento no encontrado con id: " + id);
     }
     
+    @GetMapping("/{id}/seguimientos")
+    public ResponseEntity<?> obtenerMisSeguimientos(@PathVariable Long id) {
+    	try {
+    		var seguimientos = seguimientoService.misSeguimientos(id);
+            return ResponseEntity.ok(seguimientos);
+    	} catch (IncidenciaNotFoundException e) {
+    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()); 
+    	}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( e.getMessage()); 
+		}
+    }
     
 }

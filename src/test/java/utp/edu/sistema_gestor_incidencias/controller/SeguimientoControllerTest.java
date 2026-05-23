@@ -51,7 +51,7 @@ class SeguimientoControllerTest {
                 role );
         Incidencia incidencia = new Incidencia(1L, "PC no enciende", "Descripcion",
                 EstadoIncidencia.ABIERTO, usuario, usuario);
-        return new Seguimiento(1L, incidencia, "Revisando el equipo", new Date(), Estado.ACTIVO);
+        return new Seguimiento(1L, incidencia, "Revisando el equipo", new Date(), Estado.ACTIVO, usuario);
     }
 
     // Stephani — POST /api/seguimiento
@@ -135,7 +135,7 @@ class SeguimientoControllerTest {
                 role );
         Incidencia incidencia = new Incidencia(2L, "Monitor falla", "Descripcion 2",
                 EstadoIncidencia.ABIERTO, usuario, usuario);
-        Seguimiento s2 = new Seguimiento(2L, incidencia, "Cambio de monitor", new Date(), Estado.ACTIVO);
+        Seguimiento s2 = new Seguimiento(2L, incidencia, "Cambio de monitor", new Date(), Estado.ACTIVO, usuario);
 
         when(seguimientoService.listarSeguimientos()).thenReturn(List.of(s1, s2));
 

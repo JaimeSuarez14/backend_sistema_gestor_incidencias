@@ -11,8 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import utp.edu.sistema_gestor_incidencias.dto.incidencia.IncidenciaDTO;
+import utp.edu.sistema_gestor_incidencias.exception.UsuarioNoEncontradoException;
 import utp.edu.sistema_gestor_incidencias.model.Incidencia;
-import utp.edu.sistema_gestor_incidencias.model.Usuario;
 import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 
@@ -27,19 +28,33 @@ public class IncidenciaController {
     private UsuarioService usuarioService;
     
     @PostMapping
-    public ResponseEntity< ? > crearIncidencia(@RequestBody Incidencia incidencia ){
-		Long idTec  = incidencia.getTecnico().getId();
-		var usuario =  usuarioService.obtenerUsuarioUsername();
-		var tecnico =  usuarioService.obtenerUsuario(idTec);
+    public ResponseEntity< ? > crearIncidencia(@RequestBody IncidenciaDTO incidencia ){
+    	
+    	try {
+    		var newIncidencia = this.incidenteService.crearIncidencia(incidencia);
+    		return ResponseEntity.status(HttpStatus.CREATED).body(newIncidencia);
+			
+    	} catch (IllegalArgumentException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+
+        } catch (RuntimeException e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+
+        } catch (Exception e) {
+
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error interno del servidor");
+
+        }
+	
 		
-		if(!usuario.isPresent() | !tecnico.isPresent()) 
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado con ese ID") ;
-		
-		incidencia.setUsuario( usuario.get() );
-		incidencia.setTecnico( tecnico.get() );
-		
-		var newIncidencia = this.incidenteService.crearIncidencia(incidencia);
-		return ResponseEntity.status(HttpStatus.CREATED).body(newIncidencia);
 	}
 	
 	@PutMapping("/{id}")
@@ -64,6 +79,17 @@ public class IncidenciaController {
     @GetMapping
     public ResponseEntity<List<Incidencia>> listarIncidencias() {
         return ResponseEntity.ok(incidenteService.listarIncidencias());
+    }
+    
+    @GetMapping("/misIncidencias")
+    public ResponseEntity<?> misIncidencias() {
+    	try {
+    		var incidencias = incidenteService.misIncidencias();
+            return ResponseEntity.ok(incidencias);
+		} catch ( UsuarioNoEncontradoException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		}
+    	
     }
     
     @GetMapping("/paginado")

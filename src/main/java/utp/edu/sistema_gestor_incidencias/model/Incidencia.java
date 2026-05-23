@@ -29,7 +29,7 @@ public class Incidencia {
 	@ManyToOne
 	@JoinColumn(name="usuario_id")
 	private Usuario usuario;
-	@NotNull
+
 	@ManyToOne
 	@JoinColumn(name="tecnico_id")
 	private Usuario tecnico;
