@@ -3,22 +3,31 @@ package utp.edu.sistema_gestor_incidencias.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import utp.edu.sistema_gestor_incidencias.model.Role;
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
+import utp.edu.sistema_gestor_incidencias.repository.RoleRepository;
 import utp.edu.sistema_gestor_incidencias.repository.UsuarioRepository;
 import utp.edu.sistema_gestor_incidencias.security.utils.SecurityUtils;
 
 @Service
 public class UsuarioService {
 
-	@Autowired
-	private UsuarioRepository usuarioRepository;
 
-    public Usuario modificarUsuario(Long id, Usuario datosNuevos) {
+	private UsuarioRepository usuarioRepository;
+	private RoleRepository roleRepository;
+
+    public UsuarioService(UsuarioRepository usuarioRepository, RoleRepository roleRepository) {
+		this.usuarioRepository = usuarioRepository;
+		this.roleRepository = roleRepository;
+	}
+
+	public Usuario modificarUsuario(Long id, Usuario datosNuevos) {
         Optional<Usuario> encontrado = this.usuarioRepository.findById(id);
         if (encontrado.isPresent()) {
             Usuario u = encontrado.get();
@@ -50,5 +59,20 @@ public class UsuarioService {
     
     public Page<Usuario> buscarTodoPorNombreDescendente(Pageable pageable){
     	return this.usuarioRepository.findAllByOrderByNombreDesc(pageable);
+    }
+    
+    @Transactional
+    public Usuario actualizarRole(Long id, String  name) {
+    	Usuario usuarioConRol = usuarioRepository.getUserWithRoles(id)
+    			.orElseThrow(()-> new UsernameNotFoundException("El usuario no fue encontrado"));
+    	
+    	Optional<Role> optionalRole =  roleRepository.findByName("ROLE_"+name);
+    	optionalRole.ifPresent(usuarioConRol::addRole);
+    	
+    	return usuarioConRol;
+    }
+    
+    public List<Usuario>  encontrarTecnicos(String name){
+    	return usuarioRepository.findTecnicosDisponibles(name);
     }
 }

@@ -42,9 +42,13 @@ public class SpringSecurityConfig {
 		return httpSecurity
 				.authorizeHttpRequests( (authorize)-> authorize
 						.requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-						.requestMatchers(HttpMethod.OPTIONS, "/api/usuario/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.GET, "/api/incidencia").hasAnyRole("ADMIN", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
+						.requestMatchers( "/api/usuario/**").hasRole("ADMIN")
+						.requestMatchers(HttpMethod.GET, "/api/incidencia/misIncidencias").hasAnyRole("EMPLEADO", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
 						.requestMatchers(HttpMethod.POST, "/api/incidencia").hasRole("EMPLEADO")
+						.requestMatchers(HttpMethod.GET, "/api/seguimiento/{id}/seguimientos").hasAnyRole("EMPLEADO", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
+						.requestMatchers(HttpMethod.POST, "/api/seguimiento").hasAnyRole("EMPLEADO", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
+						.requestMatchers("/api/incidencia/**").hasRole("ADMIN")
+						.requestMatchers("/api/seguimiento/**").hasRole("ADMIN")
 						.anyRequest().authenticated())
 						.addFilter(jwtAuthenticationFilter)
 						.addFilter(jwtValidationFilter)

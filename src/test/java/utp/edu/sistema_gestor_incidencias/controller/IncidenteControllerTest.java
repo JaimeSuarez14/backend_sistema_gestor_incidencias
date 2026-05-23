@@ -8,6 +8,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import utp.edu.sistema_gestor_incidencias.dto.incidencia.IncidenciaDTO;
 import utp.edu.sistema_gestor_incidencias.enums.Area;
 import utp.edu.sistema_gestor_incidencias.enums.Estado;
 import utp.edu.sistema_gestor_incidencias.enums.EstadoIncidencia;
@@ -56,17 +57,16 @@ class IncidenteControllerTest {
     }
 
     private Incidencia incidenciaEjemplo() {
-        return new Incidencia(1L, "PC no enciende", "El equipo no responde al inicio",
-                EstadoIncidencia.ABIERTO, usuarioEjemplo(), tecnicoEjemplo());
+        return new Incidencia( 1L, "PC no enciende", "El equipo no responde al inicio",EstadoIncidencia.ABIERTO, usuarioEjemplo(), tecnicoEjemplo());
     }
 
     // Jaime — POST /api/incidencia
     @Test
     void crearIncidencia_retorna201YIncidenciaCreada() throws Exception {
-        Incidencia incidencia = incidenciaEjemplo();
+    	Incidencia incidencia = incidenciaEjemplo();
         when(usuarioService.obtenerUsuario(1L)).thenReturn(Optional.of(usuarioEjemplo()));
         when(usuarioService.obtenerUsuario(2L)).thenReturn(Optional.of(tecnicoEjemplo()));
-        when(incidenteService.crearIncidencia(any(Incidencia.class))).thenReturn(incidencia);
+        when(incidenteService.crearIncidencia(any(IncidenciaDTO.class))).thenReturn(incidencia);
 
         mockMvc.perform(post("/api/incidencia")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -129,7 +129,7 @@ class IncidenteControllerTest {
         incidencia.getUsuario().setId(99L);;
         when(usuarioService.obtenerUsuario(99L)).thenReturn(Optional.empty());
         when(usuarioService.obtenerUsuario(2L)).thenReturn(Optional.of(tecnicoEjemplo()));
-        when(incidenteService.crearIncidencia(any(Incidencia.class))).thenReturn(incidencia);
+        when(incidenteService.crearIncidencia(any(IncidenciaDTO.class))).thenReturn(incidencia);
 
         mockMvc.perform(post("/api/incidencia")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -147,7 +147,7 @@ class IncidenteControllerTest {
         incidencia.getUsuario().setId(99L);;
         when(usuarioService.obtenerUsuario(99L)).thenReturn(Optional.empty());
         when(usuarioService.obtenerUsuario(2L)).thenReturn(Optional.of(tecnicoEjemplo()));
-        when(incidenteService.crearIncidencia(any(Incidencia.class))).thenReturn(incidencia);
+        when(incidenteService.crearIncidencia(any(IncidenciaDTO.class))).thenReturn(incidencia);
 
         mockMvc.perform(put("/api/incidencia/1")
                 .contentType(MediaType.APPLICATION_JSON)
