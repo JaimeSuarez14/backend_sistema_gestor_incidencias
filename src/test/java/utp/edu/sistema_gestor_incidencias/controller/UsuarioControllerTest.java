@@ -54,21 +54,6 @@ class UsuarioControllerTest {
                 role );
     }
 
-    // Abel — POST /api/usuario
-    /*@Test
-    void crearUsuario_retorna201YUsuarioCreado() throws Exception {
-        Usuario usuario = usuarioEjemplo();
-        when(usuarioService.crearUsuario(any(Usuario.class))).thenReturn(usuario);
-
-        mockMvc.perform(post("/api/usuario")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(usuario)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.nombre").value("Abel Torres"))
-                .andExpect(jsonPath("$.correo").value("abel@utp.edu"));
-    }*/
-
     // Jaime — PUT /api/usuario/{id}
     //@WithMockUser(username = "admin", roles = {"ADMIN"})
     @Test
@@ -116,6 +101,7 @@ class UsuarioControllerTest {
                 .andExpect(jsonPath("$[0].nombre").value("Abel Torres"));
     }
 
+    // Jaime — GET /api/usuario/paginado
     @Test
     void listarUsuariosPaginados_retorna200YListaDeUsuarios() throws Exception {
         Page<Usuario> pagina = new PageImpl<>(List.of(usuarioEjemplo()));
@@ -125,10 +111,25 @@ class UsuarioControllerTest {
             .with(user("adminUser").roles("ADMIN"))
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalElements").value(1))
-                .andExpect(jsonPath("$.totalPages").value(1))
+                .andExpect(jsonPath("$.page.totalElements").value(1))
+                .andExpect(jsonPath("$.page.totalPages").value(1))
                 .andExpect(jsonPath("$.content[0].nombre").value("Abel Torres"));
     }
+
+     // Jaime — GET /api/usuario/paginado
+     //Cuando la parametro page es erroneo
+    @Test
+    void listarUsuariosPaginados_retorna400RetornaBabRequest() throws Exception {
+        Page<Usuario> pagina = new PageImpl<>(List.of(usuarioEjemplo()));
+        when(usuarioService.buscarTodoPorNombreDescendente(any(Pageable.class))).thenReturn(pagina);
+
+        mockMvc.perform(get("/api/usuario/paginado?page=-1&size=2")
+            .with(user("adminUser").roles("ADMIN"))
+                .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("El número de página no puede ser menor a 0"));
+    }
+
     // Jaime — GET /api/usuario/{id}
     @Test
     void obtenerUsuario_retorna200CuandoExiste() throws Exception {

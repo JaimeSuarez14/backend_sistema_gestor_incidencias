@@ -10,8 +10,16 @@ public class UsuarioDTO {
 	private String correo;
 	private Area area;
 	
-	public UsuarioDTO() {}
+	public UsuarioDTO() {} 
 
+	public UsuarioDTO(String username, String password, String nombre, String correo, Area area) {
+		this.username = username;
+		this.password = password;
+		this.nombre = nombre;
+		this.correo = correo;
+		this.area = area;
+	}
+	
 	public String getUsername() {
 		return username;
 	}

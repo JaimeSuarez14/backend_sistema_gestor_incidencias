@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import utp.edu.sistema_gestor_incidencias.dto.ApiResponse;
 import utp.edu.sistema_gestor_incidencias.dto.role.RoleDTO;
 import utp.edu.sistema_gestor_incidencias.dto.usuario.UsuarioResponseDto;
@@ -42,8 +44,11 @@ public class UsuarioController {
     
     @GetMapping("/paginado")
     public PagedModel<Usuario> listarUsuariosPaginados(
-    		@RequestParam(value="page", defaultValue = "0") int page,
-    		@RequestParam(value = "size", defaultValue = "5") int size
+    		@RequestParam(value="page", defaultValue = "0") 
+            @Min(value = 0, message = "El número de página no puede ser menor a 0") int page,
+    		@RequestParam(value = "size", defaultValue = "5") 
+            @Min(value = 1, message = "El tamaño de página debe ser al menos 1")
+            @Max(value = 100, message = "No puedes solicitar más de 100 registros por página") int size
     		) {
         Pageable pageable = PageRequest.of(page, size); 
         Page<Usuario> usuarios = this.usuarioService.buscarTodoPorNombreDescendente(pageable);
