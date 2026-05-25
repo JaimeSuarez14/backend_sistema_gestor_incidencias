@@ -30,7 +30,7 @@ public class AuthController {
 	@PostMapping("/register")
 	public ResponseEntity<ApiResponse<UsuarioResponseDto>> create(@Valid @RequestBody UsuarioDTO userDto){
 		
-			Usuario user = usuarioMapper.toEntity(userDto);
+		Usuario user = usuarioMapper.toEntity(userDto);
 		Usuario newUser = authService.register(user);
 		UsuarioResponseDto userResponseDto = usuarioMapper.toResponseDto(newUser);
 		ApiResponse<UsuarioResponseDto> response = new ApiResponse<UsuarioResponseDto>(true, "Usuario Creado con exito!", 201, userResponseDto );

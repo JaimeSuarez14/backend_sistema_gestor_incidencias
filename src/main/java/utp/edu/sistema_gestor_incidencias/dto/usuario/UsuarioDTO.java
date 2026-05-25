@@ -8,7 +8,7 @@ import utp.edu.sistema_gestor_incidencias.enums.Area;
 
 public class UsuarioDTO {
 	
-	@NotBlank(message = "El nombre de usuario es obligatorio")
+  @NotBlank(message = "El nombre de usuario es obligatorio")
   @Size(min = 3, max = 20, message = "El username debe tener entre 3 y 20 caracteres")
   private String username;
 
@@ -16,7 +16,7 @@ public class UsuarioDTO {
   @Size(min = 5, message = "La contraseña debe tener al menos 5 caracteres")
   private String password;
 
-	@Size(min = 3, max = 20, message = "El nombre debe tener entre 3 y 35 caracteres")
+  @Size(min = 3, max = 20, message = "El nombre debe tener entre 3 y 35 caracteres")
   @NotBlank(message = "El nombre no puede estar vacío")
   private String nombre;
 
