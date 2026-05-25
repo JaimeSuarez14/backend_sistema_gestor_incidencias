@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import utp.edu.sistema_gestor_incidencias.dto.ApiResponse;
 import utp.edu.sistema_gestor_incidencias.dto.usuario.UsuarioDTO;
 import utp.edu.sistema_gestor_incidencias.dto.usuario.UsuarioResponseDto;
@@ -27,7 +28,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<ApiResponse<UsuarioResponseDto>> create(@RequestBody UsuarioDTO userDto){
+	public ResponseEntity<ApiResponse<UsuarioResponseDto>> create(@Valid @RequestBody UsuarioDTO userDto){
 		
 			Usuario user = usuarioMapper.toEntity(userDto);
 		Usuario newUser = authService.register(user);

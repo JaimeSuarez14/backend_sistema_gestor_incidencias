@@ -1,14 +1,31 @@
 package utp.edu.sistema_gestor_incidencias.dto.usuario;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import utp.edu.sistema_gestor_incidencias.enums.Area;
 
 public class UsuarioDTO {
 	
-	private String username;
-	private String password;
-	private String nombre;
-	private String correo;
-	private Area area;
+	@NotBlank(message = "El nombre de usuario es obligatorio")
+  @Size(min = 3, max = 20, message = "El username debe tener entre 3 y 20 caracteres")
+  private String username;
+
+  @NotBlank(message = "La contraseña es obligatoria")
+  @Size(min = 5, message = "La contraseña debe tener al menos 5 caracteres")
+  private String password;
+
+	@Size(min = 3, max = 20, message = "El nombre debe tener entre 3 y 35 caracteres")
+  @NotBlank(message = "El nombre no puede estar vacío")
+  private String nombre;
+
+  @NotBlank(message = "El correo es obligatorio")
+  @Email(message = "El formato del correo electrónico no es válido")
+  private String correo;
+
+  @NotNull(message = "El área es obligatoria")
+  private Area area;
 	
 	public UsuarioDTO() {} 
 
