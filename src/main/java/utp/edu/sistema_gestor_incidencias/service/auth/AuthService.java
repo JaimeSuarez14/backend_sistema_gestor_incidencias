@@ -16,32 +16,40 @@ import utp.edu.sistema_gestor_incidencias.repository.UsuarioRepository;
 
 @Service
 public class AuthService {
-	private final UsuarioRepository userRepository;
-	private  final  PasswordEncoder passwordEncoder;
+	private final UsuarioRepository usuarioRepository;
+	private final PasswordEncoder passwordEncoder;
 	private final RoleRepository roleRepository;
-	
+
 	public AuthService(UsuarioRepository userRepository, PasswordEncoder passwordEncoder,
 			RoleRepository roleRepository) {
-		this.userRepository = userRepository;
+		this.usuarioRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.roleRepository = roleRepository;
 	}
 
 	@Transactional
-	public Usuario register(Usuario user) {
-		String passwordHash = encryptPassword(user.getPasswordHash());
-		user.setPasswordHash(passwordHash);
-		
+	public Usuario register(Usuario usuario) {
+		// Validación de negocio 1: Email único
+		if (usuarioRepository.existsByCorreo(usuario.getCorreo())) {
+			throw new IllegalArgumentException("El correo electrónico ya se encuentra registrado.");
+		}
+
+		// Validación de negocio 2: Username único
+		if (usuarioRepository.existsByUsername(usuario.getUsername())) {
+			throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
+		}
+		String passwordHash = encryptPassword(usuario.getPasswordHash());
+		usuario.setPasswordHash(passwordHash);
+
 		Set<Role> roles = new HashSet<Role>();
 		Optional<Role> optionalRole = roleRepository.findByName("ROLE_EMPLEADO");
 		optionalRole.ifPresent(roles::add);
-		
-		user.setRoles(roles);
-		user.setEstado(Estado.ACTIVO);
-		
-		return userRepository.save(user);
-	}
 
+		usuario.setRoles(roles);
+		usuario.setEstado(Estado.ACTIVO);
+
+		return usuarioRepository.save(usuario);
+	}
 
 	public String encryptPassword(String password) {
 		return passwordEncoder.encode(password);

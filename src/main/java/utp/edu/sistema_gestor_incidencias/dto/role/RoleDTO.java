@@ -3,6 +3,7 @@ package utp.edu.sistema_gestor_incidencias.dto.role;
 public class RoleDTO {
 	private String role;
 
+	public RoleDTO(){}
 	public RoleDTO(String role) {
 		this.role = role;
 	}

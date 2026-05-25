@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import utp.edu.sistema_gestor_incidencias.dto.ApiResponse;
 import utp.edu.sistema_gestor_incidencias.dto.usuario.UsuarioDTO;
 import utp.edu.sistema_gestor_incidencias.dto.usuario.UsuarioResponseDto;
 import utp.edu.sistema_gestor_incidencias.enums.Area;
@@ -63,12 +62,6 @@ public class AuthControllerTest {
     role.add(new Role(1L, "ROLE_EMPLEADO"));
     userResponseDto.setRoles(role);
 
-    /*
-     * ApiResponse<UsuarioResponseDto> response = new
-     * ApiResponse<UsuarioResponseDto>(true, "Usuario Creado con exito!",
-     * 201, userResponseDto);
-     */
-
     when(usuarioMapper.toEntity(any(UsuarioDTO.class))).thenReturn(user);
     when(authService.register(any(Usuario.class))).thenReturn(user);
     when(usuarioMapper.toResponseDto(any(Usuario.class))).thenReturn(userResponseDto);
@@ -94,7 +87,6 @@ public class AuthControllerTest {
     Usuario user = new Usuario();
     user.setId(1L);
     user.setUsername(this.userDtoEjemplo().getUsername());
-    user.setNombre("ja");
 
     UsuarioResponseDto userResponseDto = new UsuarioResponseDto();
     userResponseDto.setUsername(user.getUsername());
@@ -115,8 +107,9 @@ public class AuthControllerTest {
         .andExpect(jsonPath("$.errors.nombre").value("El nombre debe tener entre 3 y 35 caracteres"));
   }
 
+  // Jaime — POST /api/usuario
   @Test
-  void crearUsuario_retorna400BadRequestUsername() throws Exception {
+  void crearUsuario_retorna400BadRequestUsernameErroneo() throws Exception {
 
     UsuarioDTO usuarioDtoRequest = this.userDtoEjemplo();
     usuarioDtoRequest.setUsername("ch");
@@ -124,7 +117,6 @@ public class AuthControllerTest {
     Usuario user = new Usuario();
     user.setId(1L);
     user.setUsername(this.userDtoEjemplo().getUsername());
-    user.setNombre("ja");
 
     UsuarioResponseDto userResponseDto = new UsuarioResponseDto();
     userResponseDto.setUsername(user.getUsername());
@@ -145,6 +137,7 @@ public class AuthControllerTest {
         .andExpect(jsonPath("$.errors.username").value("El username debe tener entre 3 y 20 caracteres"));
   }
 
+  // Jaime — POST /api/usuario
   @Test
   void crearUsuario_retorna400BadRequestCorreoYPassword() throws Exception {
 
@@ -155,7 +148,6 @@ public class AuthControllerTest {
     Usuario user = new Usuario();
     user.setId(1L);
     user.setUsername(this.userDtoEjemplo().getUsername());
-    user.setNombre("ja");
 
     UsuarioResponseDto userResponseDto = new UsuarioResponseDto();
     userResponseDto.setUsername(user.getUsername());
@@ -175,5 +167,34 @@ public class AuthControllerTest {
         .andExpect(jsonPath("$.error").value("Bad Request"))
         .andExpect(jsonPath("$.errors.correo").value("El formato del correo electrónico no es válido"))
         .andExpect(jsonPath("$.errors.password").value("La contraseña debe tener al menos 5 caracteres"));
+  }
+
+  // Jaime — POST /api/usuario
+  @Test
+  void crearUsuario_retorna400BadRequestCorreoExiste() throws Exception {
+
+    UsuarioDTO usuarioDtoRequest = this.userDtoEjemplo();
+    usuarioDtoRequest.setCorreo("jaimito@gmail.com");
+
+    Usuario user = new Usuario();
+    user.setId(1L);
+    user.setUsername(this.userDtoEjemplo().getUsername());
+
+    UsuarioResponseDto userResponseDto = new UsuarioResponseDto();
+    userResponseDto.setUsername(user.getUsername());
+    Set<Role> role = new HashSet<>();
+    role.add(new Role(1L, "ROLE_EMPLEADO"));
+    userResponseDto.setRoles(role);
+
+    when(usuarioMapper.toEntity(any(UsuarioDTO.class))).thenReturn(user);
+    when(authService.register(any(Usuario.class))).thenThrow(new IllegalArgumentException("El correo electrónico ya se encuentra registrado."));
+
+    mockMvc.perform(post("/api/auth/register")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(usuarioDtoRequest))
+        .with(csrf()))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.error").value("Bad Request"))
+        .andExpect(jsonPath("$.message").value("El correo electrónico ya se encuentra registrado."));
   }
 }
