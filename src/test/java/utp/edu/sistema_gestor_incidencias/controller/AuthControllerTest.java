@@ -63,8 +63,11 @@ public class AuthControllerTest {
     role.add(new Role(1L, "ROLE_EMPLEADO"));
     userResponseDto.setRoles(role);
 
-    ApiResponse<UsuarioResponseDto> response = new ApiResponse<UsuarioResponseDto>(true, "Usuario Creado con exito!",
-        201, userResponseDto);
+    /*
+     * ApiResponse<UsuarioResponseDto> response = new
+     * ApiResponse<UsuarioResponseDto>(true, "Usuario Creado con exito!",
+     * 201, userResponseDto);
+     */
 
     when(usuarioMapper.toEntity(any(UsuarioDTO.class))).thenReturn(user);
     when(authService.register(any(Usuario.class))).thenReturn(user);
@@ -72,12 +75,105 @@ public class AuthControllerTest {
 
     mockMvc.perform(post("/api/auth/register")
         .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(response))
+        .content(objectMapper.writeValueAsString(userDtoEjemplo())) // el objeto que se envia al API
         .with(csrf()))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("$.success").value(true))
         .andExpect(jsonPath("$.message").value("Usuario Creado con exito!"))
         .andExpect(jsonPath("$.dato.username").value("jaime"))
         .andExpect(jsonPath("$.dato.roles[0].name").value("ROLE_EMPLEADO"));
+  }
+
+  // Jaime — POST /api/usuario
+  @Test
+  void crearUsuario_retorna400BadRequestNombreInvalido() throws Exception {
+
+    UsuarioDTO usuarioDtoRequest = this.userDtoEjemplo();
+    usuarioDtoRequest.setNombre("ja");
+
+    Usuario user = new Usuario();
+    user.setId(1L);
+    user.setUsername(this.userDtoEjemplo().getUsername());
+    user.setNombre("ja");
+
+    UsuarioResponseDto userResponseDto = new UsuarioResponseDto();
+    userResponseDto.setUsername(user.getUsername());
+    Set<Role> role = new HashSet<>();
+    role.add(new Role(1L, "ROLE_EMPLEADO"));
+    userResponseDto.setRoles(role);
+
+    when(usuarioMapper.toEntity(any(UsuarioDTO.class))).thenReturn(user);
+    when(authService.register(any(Usuario.class))).thenReturn(user);
+    when(usuarioMapper.toResponseDto(any(Usuario.class))).thenReturn(userResponseDto);
+
+    mockMvc.perform(post("/api/auth/register")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(usuarioDtoRequest))
+        .with(csrf()))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.error").value("Bad Request"))
+        .andExpect(jsonPath("$.errors.nombre").value("El nombre debe tener entre 3 y 35 caracteres"));
+  }
+
+  @Test
+  void crearUsuario_retorna400BadRequestUsername() throws Exception {
+
+    UsuarioDTO usuarioDtoRequest = this.userDtoEjemplo();
+    usuarioDtoRequest.setUsername("ch");
+
+    Usuario user = new Usuario();
+    user.setId(1L);
+    user.setUsername(this.userDtoEjemplo().getUsername());
+    user.setNombre("ja");
+
+    UsuarioResponseDto userResponseDto = new UsuarioResponseDto();
+    userResponseDto.setUsername(user.getUsername());
+    Set<Role> role = new HashSet<>();
+    role.add(new Role(1L, "ROLE_EMPLEADO"));
+    userResponseDto.setRoles(role);
+
+    when(usuarioMapper.toEntity(any(UsuarioDTO.class))).thenReturn(user);
+    when(authService.register(any(Usuario.class))).thenReturn(user);
+    when(usuarioMapper.toResponseDto(any(Usuario.class))).thenReturn(userResponseDto);
+
+    mockMvc.perform(post("/api/auth/register")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(usuarioDtoRequest))
+        .with(csrf()))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.error").value("Bad Request"))
+        .andExpect(jsonPath("$.errors.username").value("El username debe tener entre 3 y 20 caracteres"));
+  }
+
+  @Test
+  void crearUsuario_retorna400BadRequestCorreoYPassword() throws Exception {
+
+    UsuarioDTO usuarioDtoRequest = this.userDtoEjemplo();
+    usuarioDtoRequest.setCorreo("jaimito.com.pe");
+    usuarioDtoRequest.setPassword("1234");
+
+    Usuario user = new Usuario();
+    user.setId(1L);
+    user.setUsername(this.userDtoEjemplo().getUsername());
+    user.setNombre("ja");
+
+    UsuarioResponseDto userResponseDto = new UsuarioResponseDto();
+    userResponseDto.setUsername(user.getUsername());
+    Set<Role> role = new HashSet<>();
+    role.add(new Role(1L, "ROLE_EMPLEADO"));
+    userResponseDto.setRoles(role);
+
+    when(usuarioMapper.toEntity(any(UsuarioDTO.class))).thenReturn(user);
+    when(authService.register(any(Usuario.class))).thenReturn(user);
+    when(usuarioMapper.toResponseDto(any(Usuario.class))).thenReturn(userResponseDto);
+
+    mockMvc.perform(post("/api/auth/register")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(usuarioDtoRequest))
+        .with(csrf()))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.error").value("Bad Request"))
+        .andExpect(jsonPath("$.errors.correo").value("El formato del correo electrónico no es válido"))
+        .andExpect(jsonPath("$.errors.password").value("La contraseña debe tener al menos 5 caracteres"));
   }
 }
