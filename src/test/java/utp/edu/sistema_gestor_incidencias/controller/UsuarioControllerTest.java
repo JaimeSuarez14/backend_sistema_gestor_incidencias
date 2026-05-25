@@ -12,6 +12,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import utp.edu.sistema_gestor_incidencias.dto.role.RoleDTO;
 import utp.edu.sistema_gestor_incidencias.enums.Area;
 import utp.edu.sistema_gestor_incidencias.enums.Estado;
 import utp.edu.sistema_gestor_incidencias.mappers.UsuarioMapper;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-@WebMvcTest( UsuarioController.class)
+@WebMvcTest(UsuarioController.class)
 @Import(SpringSecurityConfig.class)
 class UsuarioControllerTest {
 
@@ -48,14 +49,14 @@ class UsuarioControllerTest {
     private UsuarioMapper usuarioMapper;
 
     private Usuario usuarioEjemplo() {
-    	Set<Role> role = new HashSet<>();
-    	role.add(new Role(1L, "EMPLEADO"));
-        return new Usuario(1L,"abel" , "123456","Abel Torres", "abel@utp.edu",Estado.ACTIVO,Area.SISTEMAS,
-                role );
+        Set<Role> role = new HashSet<>();
+        role.add(new Role(1L, "EMPLEADO"));
+        return new Usuario(1L, "abel", "123456", "Abel Torres", "abel@utp.edu", Estado.ACTIVO, Area.SISTEMAS,
+                role);
     }
 
     // Jaime — PUT /api/usuario/{id}
-    //@WithMockUser(username = "admin", roles = {"ADMIN"})
+    // @WithMockUser(username = "admin", roles = {"ADMIN"})
     @Test
     void modificarUsuario_retorna200YUsuarioModificado() throws Exception {
         Usuario usuario = usuarioEjemplo();
@@ -71,7 +72,7 @@ class UsuarioControllerTest {
                 .andExpect(jsonPath("$.nombre").value("Abel Modificado"));
     }
 
-     // Jaime — PUT /api/usuario/{id}
+    // Jaime — PUT /api/usuario/{id}
     @Test
     void modificarUsuario_retorna404NotFound() throws Exception {
         Usuario usuario = usuarioEjemplo();
@@ -85,7 +86,8 @@ class UsuarioControllerTest {
                 .with(user("adminUser").roles("ADMIN"))
                 .with(csrf()))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Usuario no encontrado con id: 99"));;
+                .andExpect(content().string("Usuario no encontrado con id: 99"));
+        ;
     }
 
     // Jaime — GET /api/usuario
@@ -94,11 +96,22 @@ class UsuarioControllerTest {
         when(usuarioService.listarUsuarios()).thenReturn(List.of(usuarioEjemplo()));
 
         mockMvc.perform(get("/api/usuario")
-            .with(user("adminUser").roles("ADMIN"))
+                .with(user("adminUser").roles("ADMIN"))
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].nombre").value("Abel Torres"));
+    }
+
+    // Jaime — GET /api/usuario
+    @Test
+    void listarUsuarios_retorna403Forbidden() throws Exception {
+        when(usuarioService.listarUsuarios()).thenReturn(List.of(usuarioEjemplo()));
+
+        mockMvc.perform(get("/api/usuario")
+                .with(user("usuario").roles("EMPLEADO"))
+                .with(csrf()))
+                .andExpect(status().isForbidden());
     }
 
     // Jaime — GET /api/usuario/paginado
@@ -108,7 +121,7 @@ class UsuarioControllerTest {
         when(usuarioService.buscarTodoPorNombreDescendente(any(Pageable.class))).thenReturn(pagina);
 
         mockMvc.perform(get("/api/usuario/paginado?page=0&size=2")
-            .with(user("adminUser").roles("ADMIN"))
+                .with(user("adminUser").roles("ADMIN"))
                 .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.page.totalElements").value(1))
@@ -116,15 +129,15 @@ class UsuarioControllerTest {
                 .andExpect(jsonPath("$.content[0].nombre").value("Abel Torres"));
     }
 
-     // Jaime — GET /api/usuario/paginado
-     //Cuando la parametro page es erroneo
+    // Jaime — GET /api/usuario/paginado
+    // Cuando la parametro page es erroneo
     @Test
-    void listarUsuariosPaginados_retorna400RetornaBabRequest() throws Exception {
+    void listarUsuariosPaginados_retorna400PageErroneo() throws Exception {
         Page<Usuario> pagina = new PageImpl<>(List.of(usuarioEjemplo()));
         when(usuarioService.buscarTodoPorNombreDescendente(any(Pageable.class))).thenReturn(pagina);
 
         mockMvc.perform(get("/api/usuario/paginado?page=-1&size=2")
-            .with(user("adminUser").roles("ADMIN"))
+                .with(user("adminUser").roles("ADMIN"))
                 .with(csrf()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("El número de página no puede ser menor a 0"));
@@ -164,5 +177,39 @@ class UsuarioControllerTest {
                 .andExpect(status().isForbidden());
     }
 
-    
+    // Jaime — POST /api/usuario/{id}/role
+    @Test
+    void updateRole_retorna200() throws Exception {
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setRole("TECNICO_NIVEL_1");
+
+        Usuario usuario = usuarioEjemplo();
+
+        when(usuarioService.actualizarRole(1L, roleDTO.getRole())).thenReturn(usuario);
+
+        mockMvc.perform(post("/api/usuario/1/role")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(roleDTO))
+                .with(user("adminUser").roles("ADMIN"))
+                .with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    // Jaime — POST /api/usuario/{id}/role
+    @Test
+    void updateRole_retorna403() throws Exception {
+        RoleDTO roleDTO = new RoleDTO();
+        roleDTO.setRole("TECNICO_NIVEL_1");
+
+        Usuario usuario = usuarioEjemplo();
+
+        when(usuarioService.actualizarRole(1L, roleDTO.getRole())).thenReturn(usuario);
+
+        mockMvc.perform(post("/api/usuario/1/role")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(roleDTO))
+                .with(user("usuarioComun").roles("TECNICO"))
+                .with(csrf()))
+                .andExpect(status().isForbidden());
+    }
 }
