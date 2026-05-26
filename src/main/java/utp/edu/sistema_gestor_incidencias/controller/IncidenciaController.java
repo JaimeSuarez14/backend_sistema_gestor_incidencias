@@ -67,16 +67,13 @@ public class IncidenciaController {
 	@PutMapping("/{id}")
 	public ResponseEntity< ? > modificarIndicencia( @PathVariable("id") Long id ,@RequestBody Incidencia incidencia ){
 		
-		Long idUsu  = incidencia.getUsuario().getId();
 		Long idTec  = incidencia.getTecnico().getId();
 		
-		var usuario =  usuarioService.obtenerUsuario(idUsu);
 		var tecnico =  usuarioService.obtenerUsuario(idTec);
 		
-		if(!usuario.isPresent() | !tecnico.isPresent()) 
+		if(!tecnico.isPresent()) 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado con ese ID") ;
 		
-		incidencia.setUsuario( usuario.get() );
 		incidencia.setTecnico( tecnico.get() );
 		
 		var newIncidencia = this.incidenteService.modificarIncidencia(id, incidencia);
