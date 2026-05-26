@@ -142,6 +142,50 @@ class UsuarioControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("El número de página no puede ser menor a 0"));
     }
+    
+    // Jaime — GET /api/usuario/tecnicos
+    @Test
+    void tecnicosDisponibles_retorna200YListaTecnicos() throws Exception {
+
+        Set<Role> role = new HashSet<>();
+        role.add(new Role(1L, "ROLE_TECNICO_NIVEL_1"));
+
+        Usuario tecnico = new Usuario(
+                2L,
+                "johan",
+                "123456",
+                "Johan Gonzales",
+                "johan@utp.edu",
+                Estado.ACTIVO,
+                Area.SISTEMAS,
+                role
+        );
+
+        when(usuarioService.encontrarTecnicos("ROLE_TECNICO_NIVEL_1")).thenReturn(List.of(tecnico));
+
+        mockMvc.perform(get("/api/usuario/tecnicos")
+                .with(user("adminUser").roles("ADMIN"))
+                .with(csrf()))
+
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("Busqueda eficiente"))
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.dato.length()").value(1))
+                .andExpect(jsonPath("$.dato[0].nombre")
+                        .value("Johan Gonzales"));
+    }
+    
+ // Jaime — GET /api/usuario/tecnicos
+    @Test
+    void tecnicosDisponibles_retorna403Forbidden() throws Exception {
+
+        mockMvc.perform(get("/api/usuario/tecnicos")
+                .with(user("usuarioComun").roles("EMPLEADO"))
+                .with(csrf()))
+
+                .andExpect(status().isForbidden());
+    }
 
     // Jaime — GET /api/usuario/{id}
     @Test
