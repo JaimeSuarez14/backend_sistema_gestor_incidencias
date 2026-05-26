@@ -16,7 +16,12 @@ public class IncidenciaMapper {
 		dto.setDescripcion(incidencia.getDescripcion());
 		dto.setEstado(incidencia.getEstado());
 		dto.setUsuarioId(incidencia.getUsuario().getId());
-		dto.setTecnicoId(incidencia.getTecnico().getId());
+		
+		if(incidencia.getTecnico()== null) {
+			dto.setTecnicoId(null);
+		}else {
+			dto.setTecnicoId(incidencia.getTecnico().getId());
+		}
 		
 		return dto;
 	}
