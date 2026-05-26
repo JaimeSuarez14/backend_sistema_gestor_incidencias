@@ -28,12 +28,12 @@ public class UsuarioService {
 	}
 
 	public Usuario modificarUsuario(Long id, Usuario datosNuevos) {
-        Optional<Usuario> encontrado = this.usuarioRepository.findById(id);
+		Optional<Usuario> encontrado = usuarioRepository.getUserWithRoles(id);
         if (encontrado.isPresent()) {
             Usuario u = encontrado.get();
+            u.setUsername(datosNuevos.getUsername());
             u.setNombre(datosNuevos.getNombre());
             u.setCorreo(datosNuevos.getCorreo());
-            u.setRoles(datosNuevos.getRoles());
             u.setArea(datosNuevos.getArea());
             u.setEstado(datosNuevos.getEstado());
             return this.usuarioRepository.save(u);

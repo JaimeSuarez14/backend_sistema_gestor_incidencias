@@ -1,6 +1,6 @@
 # Casos de Prueba de Usuario
 
-Este documento describe casos de prueba funcionales(11 casos) para los endpoints implementados en el modulo de usuario.
+Este documento describe casos de prueba funcionales(13 casos) para los endpoints implementados en el modulo de usuario.
 
 Base URL local:
 
@@ -133,6 +133,33 @@ Parametros:
   - Confirmar que `$.message` contiene el mensaje de validacion esperado.
 - Rol requerido: `ADMIN`.
 
+## Endpoint: Listar tecnicos disponibles
+
+Ruta:
+
+```text
+GET /api/usuario/tecnicos
+```
+### Caso 1. Listar tecnicos disponibles
+
+- Salida esperada:
+  - Codigo HTTP `200 OK`.
+  - Se devuelve una lista con al menos un usuario envuelto bajo la estructura ApiResponse.
+  - El primer elemento tiene `nombre = "Johan Gonzales"`.
+- Verificacion:
+  - Confirmar que `$.success = true`.
+  - Confirmar que `$.message = ` tiene una respuesta: "Busqueda eficiente" .
+  - Confirmar que `$.status = 200`.
+  - Confirmar que `$.dato[0].nombre` tiene el valor esperado.
+- Rol requerido: `ADMIN`.
+
+### Caso 2.  Listar tecnicos disponibles sin permisos (403 Forbidden)
+
+- Salida esperada:
+  - Codigo HTTP `403 Forbidden`.
+- Verificacion:
+  - Confirmar que un usuario con rol `EMPLEADO` no puede listar todos los usuarios.
+  
 ## Endpoint: Obtener usuario por ID
 
 Ruta:
