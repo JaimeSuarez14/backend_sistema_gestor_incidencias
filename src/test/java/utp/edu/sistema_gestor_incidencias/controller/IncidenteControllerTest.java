@@ -155,10 +155,9 @@ class IncidenteControllerTest {
     void modificarIncidencia_retorna404NotFound() throws Exception {
         Incidencia incidencia = incidenciaEjemplo();
         incidencia.setDescripcion("El equipo prende, pero demora como 5 minutos en iniciar sesión");
-        incidencia.getUsuario().setId(99L);
+        incidencia.getTecnico().setId(99L);
         ;
         when(usuarioService.obtenerUsuario(99L)).thenReturn(Optional.empty());
-        when(usuarioService.obtenerUsuario(2L)).thenReturn(Optional.of(tecnicoEjemplo()));
 
         mockMvc.perform(put("/api/incidencia/1")
                 .contentType(MediaType.APPLICATION_JSON)
