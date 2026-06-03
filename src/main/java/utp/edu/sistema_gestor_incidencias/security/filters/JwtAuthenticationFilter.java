@@ -1,10 +1,13 @@
 package utp.edu.sistema_gestor_incidencias.security.filters;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.crypto.SecretKey;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,9 +33,11 @@ import tools.jackson.databind.ObjectMapper;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 	private AuthenticationManager authenticationManager;
+	private TokenJwtConfig tokenConfig ;
 
-	public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+	public JwtAuthenticationFilter(AuthenticationManager authenticationManager, TokenJwtConfig tokenConfig) {
 		this.authenticationManager = authenticationManager;
+		this.tokenConfig = tokenConfig;
 	}
 
 	
@@ -67,10 +74,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				.map(GrantedAuthority::getAuthority)
 				.toList();
 		Claims claims = Jwts.claims().add("authorities", authorities).build();
+		
+		System.out.println(tokenConfig.getSecretKey());
+		SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(tokenConfig.getSecretKey()));
+
 		String token = Jwts.builder()
 				.subject(username)
 				.claims(claims)
-				.signWith(TokenJwtConfig.SECRET_KEY)
+				.signWith(key)
 				.issuedAt(new Date())
 				.expiration(new Date(System.currentTimeMillis() + 3600000))
 				.compact();

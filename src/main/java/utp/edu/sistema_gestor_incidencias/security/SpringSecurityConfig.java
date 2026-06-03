@@ -34,13 +34,13 @@ public class SpringSecurityConfig {
 	}
 
 	@Bean
-	SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+	SecurityFilterChain filterChain(HttpSecurity httpSecurity, TokenJwtConfig tokenJwtConfig) throws Exception {
 
 		AuthenticationManager manager = authenticationConfiguration.getAuthenticationManager();
 
-		JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(manager);
+		JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(manager, tokenJwtConfig);
 
-		JwtValidationFilter jwtValidationFilter = new JwtValidationFilter(manager);
+		JwtValidationFilter jwtValidationFilter = new JwtValidationFilter(manager, tokenJwtConfig);
 
 		return httpSecurity
 				.cors(cors -> cors.configurationSource(corsConfigurationSource()) )
@@ -66,7 +66,7 @@ public class SpringSecurityConfig {
 
 	@Bean CorsConfigurationSource corsConfigurationSource(){
 		CorsConfiguration confi = new CorsConfiguration();
-		confi.addAllowedOrigin("*");
+		confi.addAllowedOriginPattern("*");
 		confi.addAllowedMethod("*");
 		confi.addAllowedHeader("*");
 		confi.setAllowCredentials(true);
