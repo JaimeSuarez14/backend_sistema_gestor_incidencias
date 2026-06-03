@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.BAD_REQUEST.value());
         body.put("error", "Bad Request");
-        body.put("message", "El área especificada no es válida. Valores permitidos: CONTABILIDAD, SISTEMAS, etc.");
+        body.put("message", "El área especificada no es válida");
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
