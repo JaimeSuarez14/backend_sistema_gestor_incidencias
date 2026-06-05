@@ -1,6 +1,5 @@
 package utp.edu.sistema_gestor_incidencias.security.filters;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -75,7 +74,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				.toList();
 		Claims claims = Jwts.claims().add("authorities", authorities).build();
 		
-		System.out.println(tokenConfig.getSecretKey());
+		System.out.println(authorities);
 		SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(tokenConfig.getSecretKey()));
 
 		String token = Jwts.builder()

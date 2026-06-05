@@ -1,7 +1,6 @@
 package utp.edu.sistema_gestor_incidencias.security.filters;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
