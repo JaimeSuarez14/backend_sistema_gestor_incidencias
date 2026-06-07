@@ -23,6 +23,7 @@ import utp.edu.sistema_gestor_incidencias.exception.UsuarioNoEncontradoException
 import utp.edu.sistema_gestor_incidencias.mappers.SeguimientoMapper;
 import utp.edu.sistema_gestor_incidencias.model.*;
 import utp.edu.sistema_gestor_incidencias.security.SpringSecurityConfig;
+import utp.edu.sistema_gestor_incidencias.security.TokenJwtConfig;
 import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.SeguimientoService;
 
@@ -47,7 +48,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 
 @WebMvcTest(SeguimientoController.class)
 @Import(SpringSecurityConfig.class)
-class SeguimientoControllerTest { 
+class SeguimientoControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -68,6 +69,9 @@ class SeguimientoControllerTest {
 
   @MockitoBean
   private UserDetailsService userDetailsService;
+
+  @MockitoBean
+  private TokenJwtConfig tokenJwtConfig;
 
   private Seguimiento seguimientoEjemplo() {
     Set<Role> role = new HashSet<>();
