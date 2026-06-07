@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.http.MediaType;
-
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -27,6 +27,7 @@ import utp.edu.sistema_gestor_incidencias.mappers.UsuarioMapper;
 import utp.edu.sistema_gestor_incidencias.model.Role;
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
 import utp.edu.sistema_gestor_incidencias.security.SpringSecurityConfig;
+import utp.edu.sistema_gestor_incidencias.security.TokenJwtConfig;
 import utp.edu.sistema_gestor_incidencias.service.auth.AuthService;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
@@ -43,6 +44,8 @@ public class AuthControllerTest {
   private AuthService authService;
   @MockitoBean
   private UsuarioMapper usuarioMapper;
+  @MockitoBean
+  private TokenJwtConfig tokenJwtConfig;
 
   private UsuarioDTO userDtoEjemplo() {
     return new UsuarioDTO("jaime", "123456", "Jaime Suarez", "jaimito@gmail.com", Area.CONTABILIDAD);
@@ -187,7 +190,8 @@ public class AuthControllerTest {
     userResponseDto.setRoles(role);
 
     when(usuarioMapper.toEntity(any(UsuarioDTO.class))).thenReturn(user);
-    when(authService.register(any(Usuario.class))).thenThrow(new IllegalArgumentException("El correo electrónico ya se encuentra registrado."));
+    when(authService.register(any(Usuario.class)))
+        .thenThrow(new IllegalArgumentException("El correo electrónico ya se encuentra registrado."));
 
     mockMvc.perform(post("/api/auth/register")
         .contentType(MediaType.APPLICATION_JSON)
