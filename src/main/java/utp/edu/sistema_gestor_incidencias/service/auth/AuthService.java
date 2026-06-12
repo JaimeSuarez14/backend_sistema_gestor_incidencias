@@ -55,4 +55,10 @@ public class AuthService {
 		return passwordEncoder.encode(password);
 	}
 
+	@Transactional
+	public boolean  existsByUsername(String username) {
+		return usuarioRepository.existsByUsername(username);
+	}
+
+
 }
