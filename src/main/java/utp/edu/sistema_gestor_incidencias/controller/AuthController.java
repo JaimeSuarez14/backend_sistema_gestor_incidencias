@@ -1,5 +1,8 @@
 package utp.edu.sistema_gestor_incidencias.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,9 +44,11 @@ public class AuthController {
 	}
 
 	@GetMapping("/{username}")
-	public ResponseEntity<Boolean> existsByUsername(@PathVariable String username) {
+	public ResponseEntity<Map<String, Boolean>> existsByUsername(@PathVariable String username) {
 		boolean exists = authService.existsByUsername(username);
-		return ResponseEntity.ok(exists);
+		Map<String, Boolean> response = new HashMap<>();
+		response.put("exists", exists);
+		return ResponseEntity.ok(response);
 	}
 
 	

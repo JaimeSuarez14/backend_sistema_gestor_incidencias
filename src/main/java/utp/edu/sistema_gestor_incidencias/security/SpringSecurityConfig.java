@@ -46,7 +46,7 @@ public class SpringSecurityConfig {
 				.cors(cors -> cors.configurationSource(corsConfigurationSource()) )
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests((authorize) -> authorize
-						.requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+						.requestMatchers( "/api/auth/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/incidencia/misIncidencias")
 						.hasAnyRole("EMPLEADO", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
 						.requestMatchers(HttpMethod.POST, "/api/incidencia").hasRole("EMPLEADO")
