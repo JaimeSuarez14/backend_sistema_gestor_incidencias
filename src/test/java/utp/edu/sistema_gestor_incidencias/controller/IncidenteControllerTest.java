@@ -25,6 +25,7 @@ import utp.edu.sistema_gestor_incidencias.security.TokenJwtConfig;
 import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -88,7 +89,7 @@ class IncidenteControllerTest {
 
   private Incidencia incidenciaEjemplo() {
     return new Incidencia(1L, "PC no enciende", "El equipo no responde al inicio", EstadoIncidencia.ABIERTO,
-        usuarioEjemplo(), tecnicoEjemplo());
+        usuarioEjemplo(), new Date(),tecnicoEjemplo());
   }
 
   // Jaime — POST /api/incidencia

@@ -1,5 +1,7 @@
 package utp.edu.sistema_gestor_incidencias.model;
 
+import java.util.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,10 +15,10 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
 @Entity
-@Table(name="incidencias")
+@Table(name = "incidencias")
 public class Incidencia {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) 
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotNull
 	private String titulo;
@@ -27,17 +29,18 @@ public class Incidencia {
 	private EstadoIncidencia estado;
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name="usuario_id")
+	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
-
+	private Date fechaCreacion;
 	@ManyToOne
-	@JoinColumn(name="tecnico_id")
+	@JoinColumn(name = "tecnico_id")
 	private Usuario tecnico;
-	
-	public Incidencia() {}
-	
-	
-	public Incidencia(Long id, String titulo, String descripcion, EstadoIncidencia estado, Usuario usuario, Usuario tecnico) {
+
+	public Incidencia() {
+	}
+
+	public Incidencia(Long id, String titulo, String descripcion, EstadoIncidencia estado, Usuario usuario,
+			Date fechaCreacion, Usuario tecnico) {
 		super();
 		this.id = id;
 		this.titulo = titulo;
@@ -45,36 +48,53 @@ public class Incidencia {
 		this.estado = estado;
 		this.usuario = usuario;
 		this.tecnico = tecnico;
+		this.fechaCreacion = fechaCreacion;
 	}
 
+	public Date getFechaCreacion() {
+		return fechaCreacion;
+	}
+
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
 
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public String getTitulo() {
 		return titulo;
 	}
+
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
 	}
+
 	public String getDescripcion() {
 		return descripcion;
 	}
+
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+
 	public EstadoIncidencia getEstado() {
 		return estado;
 	}
+
 	public void setEstado(EstadoIncidencia estado) {
 		this.estado = estado;
 	}
+
 	public Usuario getUsuario() {
 		return usuario;
 	}
+
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
@@ -86,9 +106,5 @@ public class Incidencia {
 	public void setTecnico(Usuario tecnico) {
 		this.tecnico = tecnico;
 	}
-	
-	
-	
-	
 
 }

@@ -2,7 +2,6 @@ package utp.edu.sistema_gestor_incidencias.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,13 +21,17 @@ import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 
 @RestController
 @RequestMapping("/api/usuario")
-@CrossOrigin(origins = "*", allowedHeaders = "*") 
 public class UsuarioController {
 
-    @Autowired
     private UsuarioService usuarioService;
-    @Autowired
+    
     private UsuarioMapper usuarioMapper;
+
+    UsuarioController(UsuarioService usuarioService, UsuarioMapper usuarioMapper) {
+        this.usuarioService = usuarioService;
+        this.usuarioMapper = usuarioMapper;
+
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> modificarUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {

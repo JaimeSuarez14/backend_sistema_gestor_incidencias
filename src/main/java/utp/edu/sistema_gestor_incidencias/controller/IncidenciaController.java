@@ -3,7 +3,6 @@ package utp.edu.sistema_gestor_incidencias.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,15 +23,24 @@ import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 @RequestMapping("/api/incidencia")
 public class IncidenciaController {
 
-    @Autowired
+    
     private IncidenciaService incidenteService;
     
-    @Autowired
+    
     private UsuarioService usuarioService;
     
-    @Autowired
+    
     private IncidenciaMapper incidenciaMapper;
     
+    
+
+    public IncidenciaController(IncidenciaService incidenteService, UsuarioService usuarioService,
+            IncidenciaMapper incidenciaMapper) {
+        this.incidenteService = incidenteService;
+        this.usuarioService = usuarioService;
+        this.incidenciaMapper = incidenciaMapper;
+    }
+
     @PostMapping
     public ResponseEntity< ? > crearIncidencia(@RequestBody IncidenciaDTO incidencia ){
     	

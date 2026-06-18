@@ -20,6 +20,7 @@ import utp.edu.sistema_gestor_incidencias.mappers.UsuarioMapper;
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
 import utp.edu.sistema_gestor_incidencias.service.auth.AuthService;
 
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -51,6 +52,13 @@ public class AuthController {
 		return ResponseEntity.ok(response);
 	}
 
+	@GetMapping("/{correo}/validacion")
+	public ResponseEntity<Map<String, Boolean>> existsByCorreo(@PathVariable String correo) {
+		boolean exists = authService.existsByCorreo(correo);
+		Map<String, Boolean> response = new HashMap<>();
+		response.put("exists", exists);
+		return ResponseEntity.ok(response);
+	}
 	
 
 	

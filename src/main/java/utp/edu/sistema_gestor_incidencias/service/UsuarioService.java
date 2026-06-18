@@ -37,7 +37,6 @@ public class UsuarioService {
             u.setArea(datosNuevos.getArea());
             u.setEstado(datosNuevos.getEstado());
             return this.usuarioRepository.save(u);
-             
         }
         return null;
     }
