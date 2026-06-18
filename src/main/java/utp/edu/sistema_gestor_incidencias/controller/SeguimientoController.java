@@ -3,7 +3,6 @@ package utp.edu.sistema_gestor_incidencias.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,11 +23,17 @@ import utp.edu.sistema_gestor_incidencias.service.SeguimientoService;
 @RequestMapping("/api/seguimiento")
 public class SeguimientoController {
 
-	@Autowired
+	
 	private SeguimientoService seguimientoService;
 
-	@Autowired
+	
 	private SeguimientoMapper seguimientoMapper;
+
+	
+	public SeguimientoController(SeguimientoService seguimientoService, SeguimientoMapper seguimientoMapper) {
+		this.seguimientoService = seguimientoService;
+		this.seguimientoMapper = seguimientoMapper;
+	}
 
 	@PostMapping
 	public ResponseEntity<?> crearSeguimiento(@RequestBody SeguimientoDTO dto) {

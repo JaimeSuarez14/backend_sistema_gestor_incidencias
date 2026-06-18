@@ -60,5 +60,10 @@ public class AuthService {
 		return usuarioRepository.existsByUsername(username);
 	}
 
+	@Transactional
+	public boolean  existsByCorreo(String correo) {
+		return usuarioRepository.existsByCorreo(correo);
+	}
 
+	
 }

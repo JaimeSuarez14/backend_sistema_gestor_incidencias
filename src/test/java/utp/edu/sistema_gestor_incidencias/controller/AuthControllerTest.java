@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;

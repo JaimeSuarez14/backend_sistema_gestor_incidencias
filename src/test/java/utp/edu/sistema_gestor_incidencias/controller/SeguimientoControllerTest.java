@@ -80,7 +80,7 @@ class SeguimientoControllerTest {
         Estado.ACTIVO, Area.SISTEMAS,
         role);
     Incidencia incidencia = new Incidencia(1L, "PC no enciende", "Descripcion",
-        EstadoIncidencia.ABIERTO, usuario, usuario);
+        EstadoIncidencia.ABIERTO, usuario,  new Date(),usuario);
     return new Seguimiento(1L, incidencia, "Revisando el equipo", new Date(), Estado.ACTIVO, usuario);
   }
 
@@ -319,7 +319,7 @@ class SeguimientoControllerTest {
         Area.SISTEMAS,
         role);
     Incidencia incidencia = new Incidencia(2L, "Monitor falla", "Descripcion 2",
-        EstadoIncidencia.ABIERTO, usuario, usuario);
+        EstadoIncidencia.ABIERTO, usuario, new Date() ,usuario);
     Seguimiento s2 = new Seguimiento(2L, incidencia, "Cambio de monitor", new Date(), Estado.ACTIVO,
         usuario);
 

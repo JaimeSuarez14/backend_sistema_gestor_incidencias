@@ -1,6 +1,5 @@
 package utp.edu.sistema_gestor_incidencias.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,8 +24,13 @@ import utp.edu.sistema_gestor_incidencias.security.filters.JwtValidationFilter;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig {
-	@Autowired
+	
 	private AuthenticationConfiguration authenticationConfiguration;
+	
+
+	public SpringSecurityConfig(AuthenticationConfiguration authenticationConfiguration) {
+		this.authenticationConfiguration = authenticationConfiguration;
+	}
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
@@ -43,10 +47,10 @@ public class SpringSecurityConfig {
 		JwtValidationFilter jwtValidationFilter = new JwtValidationFilter(manager, tokenJwtConfig);
 
 		return httpSecurity
-				.cors(cors -> cors.configurationSource(corsConfigurationSource()) )
+				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests((authorize) -> authorize
-						.requestMatchers( "/api/auth/**").permitAll()
+						.requestMatchers("/api/auth/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/incidencia/misIncidencias")
 						.hasAnyRole("EMPLEADO", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
 						.requestMatchers(HttpMethod.POST, "/api/incidencia").hasRole("EMPLEADO")
@@ -64,7 +68,8 @@ public class SpringSecurityConfig {
 				.build();
 	}
 
-	@Bean CorsConfigurationSource corsConfigurationSource(){
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration confi = new CorsConfiguration();
 		confi.addAllowedOriginPattern("*");
 		confi.addAllowedMethod("*");
