@@ -40,7 +40,7 @@ public class SeguimientoService {
       throw new IncidenciaNotFoundException("Incidencia no encontrada");
     }
 
-    Usuario usuario = usuarioService.obtenerUsuarioUsername()
+    Usuario usuario = usuarioService.obtenerUsuarioSession()
         .orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no se ha encontrado"));
 
     seguimiento.setUsuario(usuario);

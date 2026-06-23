@@ -3,12 +3,15 @@ package utp.edu.sistema_gestor_incidencias.service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import org.springframework.stereotype.Service;
 
+import utp.edu.sistema_gestor_incidencias.dto.incidencia.EstadoIncidenciaRequest;
 import utp.edu.sistema_gestor_incidencias.dto.incidencia.IncidenciaDTO;
 import utp.edu.sistema_gestor_incidencias.enums.Estado;
 import utp.edu.sistema_gestor_incidencias.enums.EstadoIncidencia;
@@ -37,7 +40,7 @@ public class IncidenciaService {
 	public Incidencia crearIncidencia(IncidenciaDTO dto) {
 		Incidencia incidencia = new Incidencia();
 
-		var usuario = usuarioService.obtenerUsuarioUsername()
+		var usuario = usuarioService.obtenerUsuarioSession()
 				.orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no encontrado"));
 
 		List<Usuario> tecnicosLibres = usuarioService.encontrarTecnicos("ROLE_TECNICO_NIVEL_1");
@@ -101,9 +104,19 @@ public class IncidenciaService {
 	}
 
 	public List<Incidencia> misIncidencias() {
-		var usuario = usuarioService.obtenerUsuarioUsername()
+		var usuario = usuarioService.obtenerUsuarioSession()
 				.orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no encontrado"));
-		return incidenciaRepository.findByUsuario(usuario);
+		List<Incidencia> comoUsuario = incidenciaRepository.findByUsuario(usuario);
+		List<Incidencia> comoTecnico = incidenciaRepository.findByTecnico(usuario);
+		return Stream.concat(comoUsuario.stream(), comoTecnico.stream())
+				.distinct()
+				.collect(Collectors.toList());
+	}
+
+	public Incidencia modificarEstado(EstadoIncidenciaRequest est){
+		Incidencia incidencia = incidenciaRepository.findById(est.getIdIncidencia()).orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no encontrado"));
+		incidencia.setEstado(est.getEstado());
+		return incidenciaRepository.save(incidencia);
 	}
 
 }

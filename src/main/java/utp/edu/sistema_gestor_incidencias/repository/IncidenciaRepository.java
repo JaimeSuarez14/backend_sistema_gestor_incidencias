@@ -12,4 +12,5 @@ import utp.edu.sistema_gestor_incidencias.model.Usuario;
 public interface IncidenciaRepository extends JpaRepository<Incidencia, Long> {
 	Page<Incidencia> findAllByOrderByTituloDesc(Pageable pageable) ;
 	List<Incidencia> findByUsuario(Usuario usuario);
+	List<Incidencia> findByTecnico(Usuario tecnico);
 }
