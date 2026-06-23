@@ -18,17 +18,22 @@ import utp.edu.sistema_gestor_incidencias.security.utils.SecurityUtils;
 @Service
 public class UsuarioService {
 
-
-	private UsuarioRepository usuarioRepository;
-	private RoleRepository roleRepository;
+    private UsuarioRepository usuarioRepository;
+    private RoleRepository roleRepository;
 
     public UsuarioService(UsuarioRepository usuarioRepository, RoleRepository roleRepository) {
-		this.usuarioRepository = usuarioRepository;
-		this.roleRepository = roleRepository;
-	}
+        this.usuarioRepository = usuarioRepository;
+        this.roleRepository = roleRepository;
+    }
 
-	public Usuario modificarUsuario(Long id, Usuario datosNuevos) {
-		Optional<Usuario> encontrado = usuarioRepository.getUserWithRoles(id);
+    public Usuario modificarUsuario(Long id, Usuario datosNuevos) {
+        Optional<Usuario> encontrado = null;
+        if (id == null) {
+            encontrado = obtenerUsuarioSession();
+        } else {
+            encontrado = usuarioRepository.getUserWithRoles(id);
+        }
+
         if (encontrado.isPresent()) {
             Usuario u = encontrado.get();
             u.setUsername(datosNuevos.getUsername());
@@ -46,32 +51,49 @@ public class UsuarioService {
     }
 
     public Optional<Usuario> obtenerUsuario(Long id) {
-    	Optional<Usuario> encontrado = this.usuarioRepository.findById(id);
+        Optional<Usuario> encontrado = this.usuarioRepository.findById(id);
         return encontrado;
     }
-    
-    public Optional<Usuario> obtenerUsuarioUsername() {
-    	String username = SecurityUtils.getCurrentUsername();
-    	Optional<Usuario> encontrado = usuarioRepository.findByUsername(username);
+
+    public Optional<Usuario> obtenerUsuarioSession() {
+        String username = SecurityUtils.getCurrentUsername();
+        Optional<Usuario> encontrado = usuarioRepository.findByUsername(username);
         return encontrado;
     }
-    
-    public Page<Usuario> buscarTodoPorNombreDescendente(Pageable pageable){
-    	return this.usuarioRepository.findAllByOrderByNombreDesc(pageable);
+
+    public Page<Usuario> buscarTodoPorNombreDescendente(Pageable pageable) {
+        return this.usuarioRepository.findAllByOrderByNombreDesc(pageable);
     }
-    
+
     @Transactional
-    public Usuario actualizarRole(Long id, String  name) {
-    	Usuario usuarioConRol = usuarioRepository.getUserWithRoles(id)
-    			.orElseThrow(()-> new UsernameNotFoundException("El usuario no fue encontrado"));
-    	
-    	Optional<Role> optionalRole =  roleRepository.findByName("ROLE_"+name);
-    	optionalRole.ifPresent(usuarioConRol::addRole);
-    	
-    	return usuarioConRol;
+    public Usuario actualizarRole(Long id, String name) {
+        Usuario usuarioConRol = usuarioRepository.getUserWithRoles(id)
+                .orElseThrow(() -> new UsernameNotFoundException("El usuario no fue encontrado"));
+
+        Optional<Role> optionalRole = roleRepository.findByName("ROLE_" + name);
+        optionalRole.ifPresent(usuarioConRol::addRole);
+
+        return usuarioConRol;
     }
-    
-    public List<Usuario>  encontrarTecnicos(String name){
-    	return usuarioRepository.findTecnicosDisponibles(name);
+
+    public List<Usuario> encontrarTecnicos(String name) {
+        return usuarioRepository.findTecnicosDisponibles(name);
+    }
+
+    public Optional<Usuario> obtenerUsuarioPorUsername(String username) {
+        Optional<Usuario> encontrado = usuarioRepository.findByUsername(username);
+        return encontrado;
+    }
+
+    public Usuario actualizarPerfil(Usuario datosNuevos) {
+        Optional<Usuario> encontrado = obtenerUsuarioSession();
+        if (encontrado.isPresent()) {
+            Usuario u = encontrado.get();
+            u.setUsername(datosNuevos.getUsername());
+            u.setNombre(datosNuevos.getNombre());
+            u.setCorreo(datosNuevos.getCorreo());
+            return this.usuarioRepository.save(u);
+        }
+        return null;
     }
 }

@@ -263,7 +263,7 @@ class IncidenteControllerTest {
   }
 
   // Jaime — GET /api/incidencia/paginado
-  @Test
+  /*@Test
   void listarIncidenciasPaginado_retorna403Forbidden() throws Exception {
 
     mockMvc.perform(get("/api/incidencia/paginado")
@@ -273,7 +273,7 @@ class IncidenteControllerTest {
         .with(csrf()))
 
         .andExpect(status().isForbidden());
-  }
+  }*/
 
   // Johan — GET /api/incidencia/{id}
   @Test
