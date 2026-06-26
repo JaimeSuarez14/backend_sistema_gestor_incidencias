@@ -101,4 +101,6 @@ public class UsuarioController {
       return ResponseEntity.ok(modificado);
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado con Usuario");
   }
+
+  
 }
