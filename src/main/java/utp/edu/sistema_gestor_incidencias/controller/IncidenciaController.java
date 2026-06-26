@@ -105,14 +105,13 @@ public class IncidenciaController {
   }
 
   @GetMapping("/incidenciasPropias")
-  public ResponseEntity<?> misIncidenciasPropias() {
-    try {
-      var incidencias = incidenteService.misIncidencias();
-      return ResponseEntity.ok(incidencias);
-    } catch (UsuarioNoEncontradoException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-    }
-
+  public PagedModel<Incidencia> misIncidenciasPropias(
+      @RequestParam(value = "page", defaultValue = "0") int page,
+      @RequestParam(value = "size", defaultValue = "5") int size) {
+    Pageable pageable = PageRequest.of(page, size);
+    Page<Incidencia> incidencias = this.incidenteService.misIncidenciasPage(pageable);
+    return new PagedModel<>(incidencias);
+    
   }
 
   @GetMapping("/paginado")

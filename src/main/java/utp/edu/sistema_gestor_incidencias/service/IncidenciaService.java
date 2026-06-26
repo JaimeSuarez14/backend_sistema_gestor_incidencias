@@ -100,7 +100,11 @@ public class IncidenciaService {
 	}
 
 	public Page<Incidencia> listarIncidenciasPaginado(Pageable pageable) {
-		return incidenciaRepository.findAllByOrderByTituloDesc(pageable);
+		return incidenciaRepository.findAllByOrderByFechaCreacionDesc(pageable);
+	}
+	
+	public Page<Incidencia> listarIncidenciasPaginadoUsuarioTecnicos(Pageable pageable) {
+		return incidenciaRepository.findAllByOrderByFechaCreacionDesc(pageable);
 	}
 
 	public List<Incidencia> misIncidencias() {
@@ -111,6 +115,12 @@ public class IncidenciaService {
 		return Stream.concat(comoUsuario.stream(), comoTecnico.stream())
 				.distinct()
 				.collect(Collectors.toList());
+	}
+
+	public Page<Incidencia> misIncidenciasPage(Pageable pageable){
+		var usuario = usuarioService.obtenerUsuarioSession()
+				.orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no encontrado"));
+		return incidenciaRepository.findByUsuarioOrTecnico(usuario, pageable);
 	}
 
 	public Incidencia modificarEstado(EstadoIncidenciaRequest est){
