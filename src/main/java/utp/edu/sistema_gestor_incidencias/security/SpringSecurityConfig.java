@@ -56,6 +56,7 @@ public class SpringSecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/api/incidencia/misIncidencias")
 						.hasAnyRole("EMPLEADO", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
 						.requestMatchers(HttpMethod.GET,"/api/incidencia/incidenciasPropias").hasAnyRole("EMPLEADO", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
+						.requestMatchers(HttpMethod.GET, "/api/incidencia/listarMisIncidenciasXBusqueda").hasAnyRole( "EMPLEADO", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
 						.requestMatchers(HttpMethod.POST, "/api/incidencia").hasAnyRole("EMPLEADO", "ADMIN")
 						.requestMatchers(HttpMethod.GET, "/api/incidencia/*").hasAnyRole("EMPLEADO", "ADMIN", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
 						.requestMatchers(HttpMethod.POST, "/api/incidencia/actualizarEstado").hasAnyRole( "ADMIN", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")

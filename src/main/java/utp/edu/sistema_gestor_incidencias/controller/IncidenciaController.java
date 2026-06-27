@@ -107,8 +107,13 @@ public class IncidenciaController {
   @GetMapping("/incidenciasPropias")
   public PagedModel<Incidencia> misIncidenciasPropias(
       @RequestParam(value = "page", defaultValue = "0") int page,
-      @RequestParam(value = "size", defaultValue = "5") int size) {
+      @RequestParam(value = "size", defaultValue = "5") int size,
+     @RequestParam(value = "texto", defaultValue = "") String texto) {
     Pageable pageable = PageRequest.of(page, size);
+     if(texto.length()>= 2){
+        Page<Incidencia> incidencias = this.incidenteService.misIncidenciasBusqueda(texto,pageable);
+        return new PagedModel<>(incidencias);
+    }
     Page<Incidencia> incidencias = this.incidenteService.misIncidenciasPage(pageable);
     return new PagedModel<>(incidencias);
     
@@ -117,8 +122,13 @@ public class IncidenciaController {
   @GetMapping("/paginado")
   public PagedModel<Incidencia> listarIncidenciasPaginados(
       @RequestParam(value = "page", defaultValue = "0") int page,
-      @RequestParam(value = "size", defaultValue = "5") int size) {
+      @RequestParam(value = "size", defaultValue = "5") int size,
+     @RequestParam(value = "texto", defaultValue = "") String texto) {
     Pageable pageable = PageRequest.of(page, size);
+     if(texto.length()>= 2){
+        Page<Incidencia> incidencias = this.incidenteService.listarIncidenciasXBusqueda(texto,pageable);
+        return new PagedModel<>(incidencias);
+    }
     Page<Incidencia> incidencias = this.incidenteService.listarIncidenciasPaginado(pageable);
     return new PagedModel<>(incidencias);
   }
