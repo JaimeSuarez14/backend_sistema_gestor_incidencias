@@ -121,7 +121,7 @@ class UsuarioControllerTest {
   @Test
   void listarUsuariosPaginados_retorna200YListaDeUsuarios() throws Exception {
     Page<Usuario> pagina = new PageImpl<>(List.of(usuarioEjemplo()));
-    when(usuarioService.buscarTodoPorNombreDescendente(any(Pageable.class))).thenReturn(pagina);
+    when(usuarioService.listarPorNombreDescendente(any(Pageable.class))).thenReturn(pagina);
 
     mockMvc.perform(get("/api/usuario/paginado?page=0&size=2")
         .with(user("adminUser").roles("ADMIN"))
@@ -137,7 +137,7 @@ class UsuarioControllerTest {
   @Test
   void listarUsuariosPaginados_retorna400PageErroneo() throws Exception {
     Page<Usuario> pagina = new PageImpl<>(List.of(usuarioEjemplo()));
-    when(usuarioService.buscarTodoPorNombreDescendente(any(Pageable.class))).thenReturn(pagina);
+    when(usuarioService.listarPorNombreDescendente(any(Pageable.class))).thenReturn(pagina);
 
     mockMvc.perform(get("/api/usuario/paginado?page=-1&size=2")
         .with(user("adminUser").roles("ADMIN"))

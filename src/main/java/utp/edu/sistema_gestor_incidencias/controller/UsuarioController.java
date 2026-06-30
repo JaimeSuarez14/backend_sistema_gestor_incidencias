@@ -49,9 +49,14 @@ public class UsuarioController {
   @GetMapping("/paginado")
   public PagedModel<Usuario> listarUsuariosPaginados(
       @RequestParam(value = "page", defaultValue = "0") @Min(value = 0, message = "El número de página no puede ser menor a 0") int page,
-      @RequestParam(value = "size", defaultValue = "5") @Min(value = 1, message = "El tamaño de página debe ser al menos 1") @Max(value = 100, message = "No puedes solicitar más de 100 registros por página") int size) {
+      @RequestParam(value = "size", defaultValue = "5") @Min(value = 1, message = "El tamaño de página debe ser al menos 1") @Max(value = 100, message = "No puedes solicitar más de 100 registros por página") int size,
+      @RequestParam(value = "texto", defaultValue = "") String texto) {
     Pageable pageable = PageRequest.of(page, size);
-    Page<Usuario> usuarios = this.usuarioService.buscarTodoPorNombreDescendente(pageable);
+    if (texto.trim().length() >= 2) {
+      Page<Usuario> usuarios = this.usuarioService.buscarPorNombreCorreoDesc(texto,  pageable);
+      return new PagedModel<>(usuarios);
+    }
+    Page<Usuario> usuarios = this.usuarioService.listarPorNombreDescendente(pageable);
     return new PagedModel<>(usuarios);
   }
 
@@ -73,7 +78,7 @@ public class UsuarioController {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado con id: " + id);
   }
 
-   @GetMapping("/{username}/username")
+  @GetMapping("/{username}/username")
   public ResponseEntity<?> obtenerUsuarioUsername(@PathVariable String username) {
     var user = usuarioService.obtenerUsuarioPorUsername(username);
     if (user.isPresent())
@@ -102,5 +107,4 @@ public class UsuarioController {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado con Usuario");
   }
 
-  
 }
