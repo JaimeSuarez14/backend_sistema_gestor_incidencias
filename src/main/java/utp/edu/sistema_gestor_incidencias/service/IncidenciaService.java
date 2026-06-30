@@ -102,7 +102,7 @@ public class IncidenciaService {
 	public Page<Incidencia> listarIncidenciasPaginado(Pageable pageable) {
 		return incidenciaRepository.findAllByOrderByFechaCreacionDesc(pageable);
 	}
-	
+
 	public Page<Incidencia> listarIncidenciasPaginadoUsuarioTecnicos(Pageable pageable) {
 		return incidenciaRepository.findAllByOrderByFechaCreacionDesc(pageable);
 	}
@@ -117,14 +117,27 @@ public class IncidenciaService {
 				.collect(Collectors.toList());
 	}
 
-	public Page<Incidencia> misIncidenciasPage(Pageable pageable){
+	public Page<Incidencia> misIncidenciasPage(Pageable pageable) {
 		var usuario = usuarioService.obtenerUsuarioSession()
 				.orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no encontrado"));
 		return incidenciaRepository.findByUsuarioOrTecnico(usuario, pageable);
 	}
 
-	public Incidencia modificarEstado(EstadoIncidenciaRequest est){
-		Incidencia incidencia = incidenciaRepository.findById(est.getIdIncidencia()).orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no encontrado"));
+	public Page<Incidencia> listarIncidenciasXBusqueda(String texto, Pageable pageable) {
+		return incidenciaRepository
+				.findByTituloContainingIgnoreCaseOrDescripcionContainingIgnoreCaseOrderByFechaCreacionDesc(texto, texto,
+						pageable);
+	}
+
+	public Page<Incidencia> misIncidenciasBusqueda(String texto, Pageable pageable) {
+		var usuario = usuarioService.obtenerUsuarioSession()
+				.orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no encontrado"));
+		return incidenciaRepository.buscarPorUsuarioOTecnicoYTexto(usuario, usuario, texto, pageable);
+	}
+
+	public Incidencia modificarEstado(EstadoIncidenciaRequest est) {
+		Incidencia incidencia = incidenciaRepository.findById(est.getIdIncidencia())
+				.orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no encontrado"));
 		incidencia.setEstado(est.getEstado());
 		return incidenciaRepository.save(incidencia);
 	}

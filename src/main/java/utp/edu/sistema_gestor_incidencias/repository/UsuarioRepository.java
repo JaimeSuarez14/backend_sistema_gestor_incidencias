@@ -18,7 +18,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 	boolean existsByCorreo(String correo);
 	boolean existsByUsername(String username);
 	
-	Page<Usuario> findAllByOrderByNombreDesc(Pageable pageable) ;
+	Page<Usuario> findAllByOrderByNombreAsc(Pageable pageable) ;
+
+	Page<Usuario> findByNombreContainingIgnoreCaseOrCorreoContainingIgnoreCaseOrderByNombreAsc(String nombre, String correo, Pageable pageable);
 	
 	@Query("select u from Usuario u left join fetch u.roles where u.id = ?1")
 	Optional<Usuario> getUserWithRoles(Long id);

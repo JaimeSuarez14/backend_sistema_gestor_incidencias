@@ -61,8 +61,12 @@ public class UsuarioService {
         return encontrado;
     }
 
-    public Page<Usuario> buscarTodoPorNombreDescendente(Pageable pageable) {
-        return this.usuarioRepository.findAllByOrderByNombreDesc(pageable);
+    public Page<Usuario> listarPorNombreDescendente(Pageable pageable) {
+        return this.usuarioRepository.findAllByOrderByNombreAsc(pageable);
+    }
+
+    public Page<Usuario> buscarPorNombreCorreoDesc(String texto, Pageable pageable ){
+        return this.usuarioRepository.findByNombreContainingIgnoreCaseOrCorreoContainingIgnoreCaseOrderByNombreAsc(texto, texto, pageable);
     }
 
     @Transactional
