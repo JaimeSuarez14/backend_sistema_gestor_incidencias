@@ -15,6 +15,8 @@ import utp.edu.sistema_gestor_incidencias.model.Usuario;
 public interface SeguimientoRepository extends JpaRepository<Seguimiento, Long> {
 	Page<Seguimiento> findAllByOrderByFechaDesc(Pageable pageable) ;
 	
+	List<Seguimiento> findByIncidencia(Incidencia incidencia);
+
 	@Query("SELECT s FROM Seguimiento s " +
 	           "WHERE s.incidencia = :incidencia " +
 	           "AND (s.usuario = :usuario OR s.usuario = :tecnico)")

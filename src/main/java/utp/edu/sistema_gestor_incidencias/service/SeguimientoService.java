@@ -1,16 +1,21 @@
 package utp.edu.sistema_gestor_incidencias.service;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import utp.edu.sistema_gestor_incidencias.exception.IncidenciaNotFoundException;
 import utp.edu.sistema_gestor_incidencias.exception.UsuarioNoEncontradoException;
 import utp.edu.sistema_gestor_incidencias.model.Incidencia;
+import utp.edu.sistema_gestor_incidencias.model.Role;
 import utp.edu.sistema_gestor_incidencias.model.Seguimiento;
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
 import utp.edu.sistema_gestor_incidencias.repository.IncidenciaRepository;
@@ -35,16 +40,26 @@ public class SeguimientoService {
   public Seguimiento crearSeguimiento(Seguimiento seguimiento) {
 
     Optional<Incidencia> incidencia = incidenciaRepository.findById(seguimiento.getIncidencia().getId());
-
     if (!incidencia.isPresent()) {
       throw new IncidenciaNotFoundException("Incidencia no encontrada");
     }
-
+    Incidencia incidenciaEncontrada = incidencia.get();
+    
     Usuario usuario = usuarioService.obtenerUsuarioSession()
         .orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no se ha encontrado"));
+    
+    Long idSession = usuario.getId();
+    var mismoUsuario = Objects.equals(idSession, incidenciaEncontrada.getUsuario().getId());
+    var misTecnico = incidenciaEncontrada.getTecnico() != null && Objects.equals(idSession, incidenciaEncontrada.getTecnico().getId());
+    var isAdmin = usuario.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_ADMIN"));
 
-    seguimiento.setUsuario(usuario);
-    seguimiento.setIncidencia(incidencia.get());
+    if (mismoUsuario || misTecnico || isAdmin) {
+      seguimiento.setUsuario(usuario);
+    }else{
+      throw new AccessDeniedException("Usuario no autorizado para crear");
+    }
+
+    seguimiento.setIncidencia(incidenciaEncontrada);
     Date fechaActual = new Date();
     seguimiento.setFecha(fechaActual);
 
@@ -87,7 +102,25 @@ public class SeguimientoService {
   public List<Seguimiento> misSeguimientos(Long id) {
     Incidencia incidencia = incidenciaRepository.findById(id)
         .orElseThrow(() -> new IncidenciaNotFoundException("Incidencia no encontrada"));
-    return seguimientoRepository.findByIncidenciaAndUsuarioOrTecnico(incidencia, incidencia.getUsuario(),
-        incidencia.getTecnico());
+    Usuario usuario = usuarioService.obtenerUsuarioSession()
+        .orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no se ha encontrado"));
+
+    Long idSession = usuario.getId();
+
+    var mismoUsuario = Objects.equals(idSession, incidencia.getUsuario().getId());
+    var misTecnico = incidencia.getTecnico() != null && Objects.equals(idSession, incidencia.getTecnico().getId());
+    var isAdmin = usuario.getRoles().stream().anyMatch(r -> r.getName().equals("ROLE_ADMIN"));
+
+    if (mismoUsuario || misTecnico || isAdmin) {
+      return seguimientoRepository.findByIncidencia(incidencia);
+    }
+
+    throw new AccessDeniedException("Usuario no autorizado");
+
+    /*
+     * return seguimientoRepository.findByIncidenciaAndUsuarioOrTecnico(incidencia,
+     * incidencia.getUsuario(),
+     * incidencia.getTecnico());
+     */
   }
 }
