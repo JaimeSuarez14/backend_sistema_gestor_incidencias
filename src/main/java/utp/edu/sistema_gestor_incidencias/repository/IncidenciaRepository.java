@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import utp.edu.sistema_gestor_incidencias.enums.EstadoIncidencia;
 import utp.edu.sistema_gestor_incidencias.model.Incidencia;
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
 
@@ -38,4 +39,20 @@ public interface IncidenciaRepository extends JpaRepository<Incidencia, Long> {
 	List<Incidencia> findByUsuario(Usuario usuario);
 
 	List<Incidencia> findByTecnico(Usuario tecnico);
+
+	long countByEstado(EstadoIncidencia estado);
+
+	// Alternativa: obtener todos los conteos de un solo golpe (GROUP BY)
+	@Query("SELECT i.estado, COUNT(i) FROM Incidencia i GROUP BY i.estado")
+	List<Object[]> countGroupByEstado();
+
+	long countByUsuarioOrTecnico(Usuario usuario, Usuario tecnico);
+
+	@Query("SELECT COUNT(i) FROM Incidencia i WHERE (i.usuario = :usuario OR i.tecnico = :tecnico) AND i.estado = :estado")
+	long countByUsuarioOrTecnicoAndEstado(@Param("usuario") Usuario usuario,
+			@Param("tecnico") Usuario tecnico,
+			@Param("estado") EstadoIncidencia estado);
+
+	// Últimos 5 incidencias registrados
+	List<Incidencia> findTop5ByUsuarioOrTecnicoOrderByFechaCreacionDesc(Usuario usuario, Usuario tecnico);
 }
