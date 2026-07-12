@@ -51,6 +51,7 @@ public class SpringSecurityConfig {
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests((authorize) -> authorize
 						.requestMatchers("/api/auth/**").permitAll()
+
 						.requestMatchers(HttpMethod.GET,"/api/usuario/*/username").permitAll()
 						.requestMatchers(HttpMethod.POST,"/api/usuario/updatePerfil").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/incidencia/misIncidencias")
@@ -64,6 +65,7 @@ public class SpringSecurityConfig {
 						.hasAnyRole("EMPLEADO", "ADMIN","TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
 						.requestMatchers(HttpMethod.POST, "/api/seguimiento")
 						.hasAnyRole("EMPLEADO","ADMIN", "TECNICO_NIVEL_1", "TECNICO_NIVEL_2", "TECNICO_NIVEL_3")
+						.requestMatchers("/api/dashboard/principal").hasRole("ADMIN")
 						.requestMatchers("/api/usuario/**").hasRole("ADMIN")
 						.requestMatchers("/api/incidencia/**").hasRole("ADMIN")
 						.requestMatchers("/api/seguimiento/**").hasRole("ADMIN")
