@@ -19,6 +19,7 @@ import utp.edu.sistema_gestor_incidencias.mappers.UsuarioMapper;
 import utp.edu.sistema_gestor_incidencias.model.*;
 import utp.edu.sistema_gestor_incidencias.security.SpringSecurityConfig;
 import utp.edu.sistema_gestor_incidencias.security.TokenJwtConfig;
+import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 
 import java.util.HashSet;
@@ -45,6 +46,9 @@ class UsuarioControllerTest {
 
   @MockitoBean
   private UsuarioService usuarioService;
+
+  @MockitoBean
+  private IncidenciaService incidenciaService;
 
   @MockitoBean
   private UsuarioMapper usuarioMapper;
@@ -165,7 +169,7 @@ class UsuarioControllerTest {
 
     when(usuarioService.encontrarTecnicos("ROLE_TECNICO_NIVEL_1")).thenReturn(List.of(tecnico));
 
-    mockMvc.perform(get("/api/usuario/tecnicos")
+    mockMvc.perform(get("/api/usuario/tecnicos_disponibles")
         .with(user("adminUser").roles("ADMIN"))
         .with(csrf()))
 

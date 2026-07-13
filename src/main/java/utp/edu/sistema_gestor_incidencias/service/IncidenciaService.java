@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import utp.edu.sistema_gestor_incidencias.dto.incidencia.EstadoIncidenciaRequest;
 import utp.edu.sistema_gestor_incidencias.dto.incidencia.IncidenciaDTO;
+import utp.edu.sistema_gestor_incidencias.dto.incidencia.IncidenciaRequestTecnico;
 import utp.edu.sistema_gestor_incidencias.dto.usuario.TecnicosDTO;
 import utp.edu.sistema_gestor_incidencias.enums.Estado;
 import utp.edu.sistema_gestor_incidencias.enums.EstadoIncidencia;
@@ -143,8 +144,27 @@ public class IncidenciaService {
 		return incidenciaRepository.save(incidencia);
 	}
 
-	public List<TecnicosDTO> listaTecnicoConIncidencia(){
+	public List<TecnicosDTO> listaTecnicoConIncidencia() {
 		return incidenciaRepository.obtenerTecnicosConIncidenciasPendientes();
 	}
 
+	public Incidencia cambiarTecnico(IncidenciaRequestTecnico dto) {
+		Incidencia incidencia = incidenciaRepository.findById(dto.getIdIncidencia())
+				.orElseThrow(() -> new IllegalArgumentException("Incidencia no encontrada"));
+
+		// regla de negocio: solo permitir cambio si está en estado ABIERTA o PENDIENTE.
+		if (incidencia.getEstado().equals(EstadoIncidencia.CERRADO)) {
+			throw new IllegalArgumentException("No se puede cambiar técnico en una incidencia cerrada");
+		}
+
+		Usuario tecnico = usuarioService.buscarPorId(dto.getIdTecnico())
+				.orElseThrow(() -> new IllegalArgumentException("Técnico no encontrado"));
+		if (!tecnico.getRoles().stream().anyMatch(r -> r.getName().contains("TECNICO"))) {
+			throw new IllegalArgumentException("El usuario no tiene rol de técnico");
+		}
+
+		incidencia.setTecnico(tecnico);
+
+		return incidenciaRepository.save(incidencia);
+	}
 }

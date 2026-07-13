@@ -16,9 +16,11 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import utp.edu.sistema_gestor_incidencias.dto.ApiResponse;
 import utp.edu.sistema_gestor_incidencias.dto.role.RoleDTO;
+import utp.edu.sistema_gestor_incidencias.dto.usuario.TecnicosDTO;
 import utp.edu.sistema_gestor_incidencias.dto.usuario.UsuarioResponseDto;
 import utp.edu.sistema_gestor_incidencias.mappers.UsuarioMapper;
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
+import utp.edu.sistema_gestor_incidencias.service.IncidenciaService;
 import utp.edu.sistema_gestor_incidencias.service.UsuarioService;
 
 @RestController
@@ -27,11 +29,14 @@ public class UsuarioController {
 
   private UsuarioService usuarioService;
 
+  private IncidenciaService incidenciaService;
+
   private UsuarioMapper usuarioMapper;
 
-  UsuarioController(UsuarioService usuarioService, UsuarioMapper usuarioMapper) {
+  UsuarioController(UsuarioService usuarioService,IncidenciaService incidenciaService, UsuarioMapper usuarioMapper) {
     this.usuarioService = usuarioService;
     this.usuarioMapper = usuarioMapper;
+    this.incidenciaService = incidenciaService;
 
   }
 
@@ -78,10 +83,10 @@ public class UsuarioController {
   }
 
   @GetMapping("/lista_tecnicos")
-  public ResponseEntity<ApiResponse<List<Usuario>>> listaDeTecnicos() {
-    List<Usuario> tecnicos = usuarioService.listarTecnicos(); 
+  public ResponseEntity<ApiResponse<List<TecnicosDTO>>> listaDeTecnicos() {
+    List<TecnicosDTO> tecnicos = incidenciaService.listaTecnicoConIncidencia();
 
-    ApiResponse<List<Usuario>> response = new ApiResponse<List<Usuario>>(
+    ApiResponse<List<TecnicosDTO>> response = new ApiResponse<List<TecnicosDTO>>(
         true, "Busqueda eficiente", 200, tecnicos);
 
     return ResponseEntity.status(HttpStatus.OK.value()).body(response);
@@ -112,6 +117,16 @@ public class UsuarioController {
     ApiResponse<UsuarioResponseDto> response = new ApiResponse<UsuarioResponseDto>(
         true, "Rol actualizado con exito!", 200, userResponseDto);
 
+    return ResponseEntity.status(HttpStatus.OK.value()).body(response);
+  }
+
+  // eliminar Rol
+  @PostMapping("/{id}/eliminarRol")
+  public ResponseEntity<ApiResponse<UsuarioResponseDto>> eliminarRol(@PathVariable Long id, @RequestBody RoleDTO role) {
+    Usuario user = usuarioService.eliminarRol(id, role.getRole());
+    UsuarioResponseDto userResponseDto = usuarioMapper.toResponseDto(user);
+    ApiResponse<UsuarioResponseDto> response = new ApiResponse<UsuarioResponseDto>(
+        true, "Rol eliminado con exito!", 200, userResponseDto);
     return ResponseEntity.status(HttpStatus.OK.value()).body(response);
   }
 
