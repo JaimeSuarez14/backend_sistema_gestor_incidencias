@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import utp.edu.sistema_gestor_incidencias.dto.usuario.TecnicosDTO;
 import utp.edu.sistema_gestor_incidencias.enums.EstadoIncidencia;
 import utp.edu.sistema_gestor_incidencias.model.Incidencia;
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
@@ -55,4 +56,12 @@ public interface IncidenciaRepository extends JpaRepository<Incidencia, Long> {
 
 	// Últimos 5 incidencias registrados
 	List<Incidencia> findTop5ByUsuarioOrTecnicoOrderByFechaCreacionDesc(Usuario usuario, Usuario tecnico);
+
+	@Query("SELECT new utp.edu.sistema_gestor_incidencias.dto.usuario.TecnicosDTO(u.id, u.nombre, COUNT(i)) " +
+			"FROM Usuario u " +
+			"JOIN u.roles r " +
+			"LEFT JOIN Incidencia i ON i.tecnico = u AND i.estado IN ('PENDIENTE', 'ABIERTA') " +
+			"WHERE r.name LIKE '%TECNICO%' " +
+			"GROUP BY u.id, u.nombre")
+	List<TecnicosDTO> obtenerTecnicosConIncidenciasPendientes();
 }

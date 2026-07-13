@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import utp.edu.sistema_gestor_incidencias.dto.incidencia.EstadoIncidenciaRequest;
 import utp.edu.sistema_gestor_incidencias.dto.incidencia.IncidenciaDTO;
+import utp.edu.sistema_gestor_incidencias.dto.usuario.TecnicosDTO;
 import utp.edu.sistema_gestor_incidencias.enums.Estado;
 import utp.edu.sistema_gestor_incidencias.enums.EstadoIncidencia;
 import utp.edu.sistema_gestor_incidencias.exception.UsuarioNoEncontradoException;
@@ -140,6 +141,10 @@ public class IncidenciaService {
 				.orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no encontrado"));
 		incidencia.setEstado(est.getEstado());
 		return incidenciaRepository.save(incidencia);
+	}
+
+	public List<TecnicosDTO> listaTecnicoConIncidencia(){
+		return incidenciaRepository.obtenerTecnicosConIncidenciasPendientes();
 	}
 
 }

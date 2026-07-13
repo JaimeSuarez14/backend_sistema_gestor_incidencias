@@ -84,6 +84,10 @@ public class UsuarioService {
         return usuarioRepository.findTecnicosDisponibles(name);
     }
 
+    public List<Usuario> listarTecnicos() {
+        return usuarioRepository.listarTecnicos();
+    }
+
     public Optional<Usuario> obtenerUsuarioPorUsername(String username) {
         Optional<Usuario> encontrado = usuarioRepository.findByUsername(username);
         return encontrado;
