@@ -65,8 +65,9 @@ public class UsuarioService {
         return this.usuarioRepository.findAllByOrderByNombreAsc(pageable);
     }
 
-    public Page<Usuario> buscarPorNombreCorreoDesc(String texto, Pageable pageable ){
-        return this.usuarioRepository.findByNombreContainingIgnoreCaseOrCorreoContainingIgnoreCaseOrderByNombreAsc(texto, texto, pageable);
+    public Page<Usuario> buscarPorNombreCorreoDesc(String texto, Pageable pageable) {
+        return this.usuarioRepository
+                .findByNombreContainingIgnoreCaseOrCorreoContainingIgnoreCaseOrderByNombreAsc(texto, texto, pageable);
     }
 
     @Transactional
@@ -78,6 +79,23 @@ public class UsuarioService {
         optionalRole.ifPresent(usuarioConRol::addRole);
 
         return usuarioConRol;
+    }
+
+    @Transactional
+    public Usuario eliminarRol(Long usuarioId, String rolAEliminar) {
+        // Buscar usuario
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con id: " + usuarioId));
+
+        // Buscar rol
+        Role role = roleRepository.findByName(rolAEliminar)
+                .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado: " + rolAEliminar));
+
+        // Eliminar rol del set
+        usuario.getRoles().remove(role);
+
+        // Guardar cambios
+        return usuarioRepository.save(usuario);
     }
 
     public List<Usuario> encontrarTecnicos(String name) {
@@ -103,5 +121,9 @@ public class UsuarioService {
             return this.usuarioRepository.save(u);
         }
         return null;
+    }
+
+    public Optional<Usuario> buscarPorId (Long id){
+        return usuarioRepository.findById(id);
     }
 }

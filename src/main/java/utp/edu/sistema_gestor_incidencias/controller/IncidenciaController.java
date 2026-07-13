@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import utp.edu.sistema_gestor_incidencias.dto.incidencia.EstadoIncidenciaRequest;
 import utp.edu.sistema_gestor_incidencias.dto.incidencia.IncidenciaDTO;
+import utp.edu.sistema_gestor_incidencias.dto.incidencia.IncidenciaRequestTecnico;
 import utp.edu.sistema_gestor_incidencias.dto.incidencia.IncidenciaResponseDTO;
 import utp.edu.sistema_gestor_incidencias.exception.UsuarioNoEncontradoException;
 import utp.edu.sistema_gestor_incidencias.mappers.IncidenciaMapper;
@@ -150,4 +151,12 @@ public class IncidenciaController {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Incidencia no encontrada con id: " + dto.getIdIncidencia());
   }
 
+  @PostMapping("/actualizarTecnico")
+  public ResponseEntity<?>  modificarEstadoTecnico( @RequestBody IncidenciaRequestTecnico dto) {
+    Incidencia incidenciaUpdate = incidenteService.cambiarTecnico(dto);
+    if (incidenciaUpdate!=null) {
+      return ResponseEntity.ok(incidenciaUpdate);
+    }
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Incidencia no encontrada con id: " + dto.getIdIncidencia());
+  }
 }
