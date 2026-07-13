@@ -47,7 +47,7 @@ public class AuthControllerTest {
   private TokenJwtConfig tokenJwtConfig;
 
   private UsuarioDTO userDtoEjemplo() {
-    return new UsuarioDTO("jaime", "123456", "Jaime Suarez", "jaimito@gmail.com", Area.CONTABILIDAD);
+    return new UsuarioDTO("jaime", "123456", "Jaime Suarez", "jaimito@gmail.com", "ROLE_EMPLEADO",Area.CONTABILIDAD);
   }
 
   // Jaime — POST /api/usuario
@@ -65,7 +65,7 @@ public class AuthControllerTest {
     userResponseDto.setRoles(role);
 
     when(usuarioMapper.toEntity(any(UsuarioDTO.class))).thenReturn(user);
-    when(authService.register(any(Usuario.class))).thenReturn(user);
+    when(authService.register(any(Usuario.class), any(String.class))).thenReturn(user);
     when(usuarioMapper.toResponseDto(any(Usuario.class))).thenReturn(userResponseDto);
 
     mockMvc.perform(post("/api/auth/register")
@@ -97,7 +97,7 @@ public class AuthControllerTest {
     userResponseDto.setRoles(role);
 
     when(usuarioMapper.toEntity(any(UsuarioDTO.class))).thenReturn(user);
-    when(authService.register(any(Usuario.class))).thenReturn(user);
+    when(authService.register(any(Usuario.class), any(String.class))).thenReturn(user);
     when(usuarioMapper.toResponseDto(any(Usuario.class))).thenReturn(userResponseDto);
 
     mockMvc.perform(post("/api/auth/register")
@@ -127,7 +127,7 @@ public class AuthControllerTest {
     userResponseDto.setRoles(role);
 
     when(usuarioMapper.toEntity(any(UsuarioDTO.class))).thenReturn(user);
-    when(authService.register(any(Usuario.class))).thenReturn(user);
+    when(authService.register(any(Usuario.class), any(String.class))).thenReturn(user);
     when(usuarioMapper.toResponseDto(any(Usuario.class))).thenReturn(userResponseDto);
 
     mockMvc.perform(post("/api/auth/register")
@@ -158,7 +158,7 @@ public class AuthControllerTest {
     userResponseDto.setRoles(role);
 
     when(usuarioMapper.toEntity(any(UsuarioDTO.class))).thenReturn(user);
-    when(authService.register(any(Usuario.class))).thenReturn(user);
+    when(authService.register(any(Usuario.class), any(String.class))).thenReturn(user);
     when(usuarioMapper.toResponseDto(any(Usuario.class))).thenReturn(userResponseDto);
 
     mockMvc.perform(post("/api/auth/register")
@@ -189,7 +189,7 @@ public class AuthControllerTest {
     userResponseDto.setRoles(role);
 
     when(usuarioMapper.toEntity(any(UsuarioDTO.class))).thenReturn(user);
-    when(authService.register(any(Usuario.class)))
+    when(authService.register(any(Usuario.class), any(String.class)))
         .thenThrow(new IllegalArgumentException("El correo electrónico ya se encuentra registrado."));
 
     mockMvc.perform(post("/api/auth/register")

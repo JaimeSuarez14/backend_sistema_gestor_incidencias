@@ -28,7 +28,7 @@ public class AuthService {
 	}
 
 	@Transactional
-	public Usuario register(Usuario usuario) {
+	public Usuario register(Usuario usuario, String rol) {
 		// Validación de negocio 1: Email único
 		if (usuarioRepository.existsByCorreo(usuario.getCorreo())) {
 			throw new IllegalArgumentException("El correo electrónico ya se encuentra registrado.");
@@ -42,8 +42,13 @@ public class AuthService {
 		usuario.setPasswordHash(passwordHash);
 
 		Set<Role> roles = new HashSet<Role>();
-		Optional<Role> optionalRole = roleRepository.findByName("ROLE_EMPLEADO");
-		optionalRole.ifPresent(roles::add);
+		if (rol.length()>0) {
+			Optional<Role> optionalRole = roleRepository.findByName(rol);
+			optionalRole.ifPresent(roles::add);
+		} else {
+			Optional<Role> optionalRole = roleRepository.findByName("ROLE_EMPLEADO");
+			optionalRole.ifPresent(roles::add);
+		}
 
 		usuario.setRoles(roles);
 		usuario.setEstado(Estado.ACTIVO);
@@ -56,14 +61,13 @@ public class AuthService {
 	}
 
 	@Transactional
-	public boolean  existsByUsername(String username) {
+	public boolean existsByUsername(String username) {
 		return usuarioRepository.existsByUsername(username);
 	}
 
 	@Transactional
-	public boolean  existsByCorreo(String correo) {
+	public boolean existsByCorreo(String correo) {
 		return usuarioRepository.existsByCorreo(correo);
 	}
 
-	
 }

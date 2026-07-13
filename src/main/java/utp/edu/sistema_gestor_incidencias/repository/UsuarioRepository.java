@@ -42,4 +42,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
 	// Últimos 5 usuarios registrados
 	List<Usuario> findTop5ByOrderByIdDesc();
+
+	@Query("SELECT u FROM Usuario u JOIN u.roles r WHERE r.name = 'ROLE_TECNICO_NIVEL_1' OR r.name = 'ROLE_TECNICO_NIVEL_3' OR r.name = 'ROLE_TECNICO_NIVEL_2 '")
+	List<Usuario> listarTecnicos();
 }

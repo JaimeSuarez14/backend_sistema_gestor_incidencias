@@ -26,16 +26,20 @@ public class UsuarioDTO {
 
   @NotNull(message = "El área es obligatoria")
   private Area area;
+
+	private String rol;
 	
 	public UsuarioDTO() {} 
 
-	public UsuarioDTO(String username, String password, String nombre, String correo, Area area) {
+	public UsuarioDTO(String username, String password, String nombre, String correo,String rol, Area area) {
 		this.username = username;
 		this.password = password;
 		this.nombre = nombre;
 		this.correo = correo;
 		this.area = area;
+		this.rol = rol;
 	}
+	
 	
 	public String getUsername() {
 		return username;
@@ -75,6 +79,14 @@ public class UsuarioDTO {
 
 	public void setArea(Area area) {
 		this.area = area;
+	}
+
+	public String getRol() {
+		return rol;
+	}
+
+	public void setRol(String rol) {
+		this.rol = rol;
 	}
 
 	

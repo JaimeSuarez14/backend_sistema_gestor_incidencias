@@ -1,6 +1,8 @@
 package utp.edu.sistema_gestor_incidencias.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,16 +55,31 @@ public class UsuarioController {
       @RequestParam(value = "texto", defaultValue = "") String texto) {
     Pageable pageable = PageRequest.of(page, size);
     if (texto.trim().length() >= 2) {
-      Page<Usuario> usuarios = this.usuarioService.buscarPorNombreCorreoDesc(texto,  pageable);
+      Page<Usuario> usuarios = this.usuarioService.buscarPorNombreCorreoDesc(texto, pageable);
       return new PagedModel<>(usuarios);
     }
     Page<Usuario> usuarios = this.usuarioService.listarPorNombreDescendente(pageable);
     return new PagedModel<>(usuarios);
   }
 
-  @GetMapping("/tecnicos")
+  @GetMapping("/tecnicos_disponibles")
   public ResponseEntity<ApiResponse<List<Usuario>>> tecnicosDisponibles() {
-    List<Usuario> tecnicos = usuarioService.encontrarTecnicos("ROLE_TECNICO_NIVEL_1");
+    List<Usuario> tecnicos1 = usuarioService.encontrarTecnicos("ROLE_TECNICO_NIVEL_1");
+    List<Usuario> tecnicos2 = usuarioService.encontrarTecnicos("ROLE_TECNICO_NIVEL_2");
+    List<Usuario> tecnicos3 = usuarioService.encontrarTecnicos("ROLE_TECNICO_NIVEL_3");
+    List<Usuario> listaFinal = Stream.concat(
+        Stream.concat(tecnicos1.stream(), tecnicos2.stream()),
+        tecnicos3.stream()).collect(Collectors.toList());
+
+    ApiResponse<List<Usuario>> response = new ApiResponse<List<Usuario>>(
+        true, "Busqueda eficiente", 200, listaFinal);
+
+    return ResponseEntity.status(HttpStatus.OK.value()).body(response);
+  }
+
+  @GetMapping("/lista_tecnicos")
+  public ResponseEntity<ApiResponse<List<Usuario>>> listaDeTecnicos() {
+    List<Usuario> tecnicos = usuarioService.listarTecnicos(); 
 
     ApiResponse<List<Usuario>> response = new ApiResponse<List<Usuario>>(
         true, "Busqueda eficiente", 200, tecnicos);
