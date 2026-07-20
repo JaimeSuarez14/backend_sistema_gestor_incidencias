@@ -93,8 +93,6 @@ public class UsuarioService {
 
         // Eliminar rol del set
         usuario.getRoles().remove(role);
-
-        // Guardar cambios
         return usuarioRepository.save(usuario);
     }
 

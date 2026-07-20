@@ -1,11 +1,9 @@
 package utp.edu.sistema_gestor_incidencias.service;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 import utp.edu.sistema_gestor_incidencias.exception.IncidenciaNotFoundException;
 import utp.edu.sistema_gestor_incidencias.exception.UsuarioNoEncontradoException;
 import utp.edu.sistema_gestor_incidencias.model.Incidencia;
-import utp.edu.sistema_gestor_incidencias.model.Role;
 import utp.edu.sistema_gestor_incidencias.model.Seguimiento;
 import utp.edu.sistema_gestor_incidencias.model.Usuario;
 import utp.edu.sistema_gestor_incidencias.repository.IncidenciaRepository;

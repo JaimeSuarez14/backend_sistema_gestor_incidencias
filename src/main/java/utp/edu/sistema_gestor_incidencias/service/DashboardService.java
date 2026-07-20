@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -68,7 +67,7 @@ public class DashboardService {
     for (Usuario u : topUsers) {
       LatestUserDTO lu = new LatestUserDTO();
       lu.setNombre(u.getNombre());
-      lu.setEstado(u.getEstado()); // "Alta" en tu imagen
+      lu.setEstado(u.getEstado()); 
       latest.add(lu);
     }
     dto.setLatestUsers(latest);

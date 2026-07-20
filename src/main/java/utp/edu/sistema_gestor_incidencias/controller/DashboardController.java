@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import utp.edu.sistema_gestor_incidencias.dto.dashboard.DashboardSummaryDTO;
-import utp.edu.sistema_gestor_incidencias.dto.dashboard.IncidentStatsDTO;
 import utp.edu.sistema_gestor_incidencias.service.DashboardService;
 
 @RestController
