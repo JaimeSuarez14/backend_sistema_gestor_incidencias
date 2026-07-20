@@ -165,6 +165,19 @@ public class IncidenciaService {
 
 		incidencia.setTecnico(tecnico);
 
-		return incidenciaRepository.save(incidencia);
+		var updateIncidencia = incidenciaRepository.save(incidencia);
+
+		Usuario usuarioLogeado = usuarioService.obtenerUsuarioSession()
+        .orElseThrow(() -> new UsuarioNoEncontradoException("El usuario no se ha encontrado"));
+   
+
+		Seguimiento seguimiento = new Seguimiento();
+		seguimiento.setIncidencia(updateIncidencia);
+		seguimiento.setEstado(Estado.ACTIVO);
+		seguimiento.setComentario("Incidencia modificada por " + usuarioLogeado.getUsername().toUpperCase() + " se asigno al tecnico "+ tecnico.getUsername().toUpperCase());
+
+		seguimientoService.crearSeguimiento(seguimiento);
+
+		return updateIncidencia;
 	}
 }
